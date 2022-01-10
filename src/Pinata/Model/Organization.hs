@@ -25,6 +25,7 @@ import Data.Morpheus.Types (
   EncodeScalar,
   GQLType (..),
   QUERY,
+  Resolver,
  )
 import qualified Data.Morpheus.Types as Mor
 import Data.Profunctor.Product.Default (Default (..))
@@ -226,7 +227,7 @@ findByUUID orgUuid = do
 
 data Organization m = Organization
   { activatedAt :: m (Maybe Scalar.UtcTimestamp)
-  , activatedBy :: m (Maybe (User m))
+  , activatedBy :: Arg "userPKey" UserPKey -> m (Maybe (User m))
   , adminLabel :: m (Maybe Text)
   , uuid :: m OrganizationUUID
   , name :: m Text
@@ -330,7 +331,7 @@ organizationResolver org =
         pure
           Organization
             { activatedAt = pure activatedAt'
-            , activatedBy = error "Not implemented"
+            , activatedBy = User.userByPKeyResolver
             , adminLabel = pure adminLabel'
             , createdAt = pure $ Scalar.UtcTimestamp $ DB.recordCreatedAt org
             , displayName = pure displayName'
