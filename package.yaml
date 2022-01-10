@@ -1,0 +1,119 @@
+name: web-haskell
+version: 0.1.0.0
+github: "pinata-llc/Pinata"
+license: BSD3
+author: "PINATA"
+maintainer: "PINATA"
+copyright: "2022 PINATA LLC"
+
+extra-source-files:
+  - README.md
+  - ChangeLog.md
+
+description: Please see the README on GitHub at <https://github.com/dandoh/web-haskell>
+
+default-extensions:
+  - Arrows
+  - BangPatterns
+  - ConstraintKinds
+  - DataKinds
+  - DeriveAnyClass
+  - DeriveFoldable
+  - DeriveFunctor
+  - DeriveGeneric
+  - DeriveLift
+  - DeriveTraversable
+  - DerivingStrategies
+  - DuplicateRecordFields
+  - EmptyCase
+  - FlexibleContexts
+  - FlexibleInstances
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - InstanceSigs
+  - KindSignatures
+  - LambdaCase
+  - MultiParamTypeClasses
+  - MultiWayIf
+  - NamedFieldPuns
+  - OverloadedStrings
+  - PolyKinds
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - TemplateHaskell
+  - TypeApplications
+  - TypeFamilies
+  - TypeSynonymInstances
+  - UndecidableInstances
+  - ViewPatterns
+
+dependencies:
+  - aeson
+  - aeson-pretty
+  - base
+  - bcrypt
+  - bytestring
+  - containers
+  - envy
+  - exceptions
+  - extra
+  - http-types
+  - jwt
+  - load-env
+  - monad-control
+  - morpheus-graphql
+  - morpheus-graphql-core
+  - mtl
+  - opaleye
+  - postgresql-simple
+  - postgresql-simple-url
+  - product-profunctors
+  - resource-pool
+  - scientific
+  - scotty
+  - stm
+  - tagged
+  - text
+  - time
+  - transformers
+  - transformers-base
+  - unordered-containers
+  - uuid
+  - wai-cors
+  - wai-extra
+
+library:
+  source-dirs: src
+
+executables:
+  web-exe:
+    main: Main.hs
+    source-dirs: app
+    ghc-options:
+      - -rtsopts
+      - -threaded
+      - -W
+      - -Wall
+      - -Wcompat
+      - -Wincomplete-record-updates
+      - -Wincomplete-uni-patterns
+      - -with-rtsopts=-N
+      - -Wmissing-signatures
+      - -Wredundant-constraints
+      - -fwarn-name-shadowing
+    dependencies:
+      - web-haskell
+
+tests:
+  graphql-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+      - -Wmissing-signatures
+    dependencies:
+      - web-haskell

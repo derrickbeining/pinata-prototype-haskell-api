@@ -1,0 +1,3116 @@
+type Query {
+  adminUser(id: ID!): User
+  application(id: ID): Application
+  asset(id: ID): Asset
+  assignableUsersConnections(
+    gigId: ID
+    search: String
+    tagIds: [String]
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingUser]
+  ): PaginatedUser!
+  billingContacts(organizationId: String!): [BillingContact]
+  billingContactsConnections(
+    organizationId: ID
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingProduct]
+  ): PaginatedBillingContact!
+  calendar(programIds: [ID], startDate: String!, endDate: String!, filters: JSON): JSON
+  document(id: ID!): Document!
+  documents(ids: [ID], organizationId: String!, userId: String): [Document]
+  expense(id: ID!): Expense
+  expenses(
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingExpense]
+  ): PaginatedExpense!
+  findAGig(search: String, filters: JSON, first: Int, after: ID, offset: Int, orderBy: [OrderingGig]): PaginatedGig!
+  findMyGigs(search: String, filters: JSON, first: Int, after: ID, offset: Int, orderBy: [OrderingGig]): PaginatedGig!
+  gig(id: ID, applyHash: String): Gig!
+  gigActions(programIds: [ID], filters: JSON): [GigActionCount!]!
+  gigAssignableUsers(
+    gigIds: [ID!]!
+    tagIds: [String]
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingGigAssignableUser]
+  ): PaginatedGigAssignableUser!
+  gigAssignableUsersByProgramAndDate(
+    date: Date!
+    programIds: [ID!]!
+    status: GigAssignableUserStatus
+    tagIds: [String]
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingGigAssignableUser]
+  ): PaginatedGigAssignableUser!
+  gigExpenses(
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingGigExpense]
+  ): PaginatedGigExpense!
+  gigReceiptsZipUrl(programIds: [ID], filters: JSON): [String!]!
+  gigReportStep(gigId: ID!, stepKey: ID!, productId: ID): GigReportStep
+  gigReportSteps(gigId: ID!): [GigReportStep]
+  gigs(
+    programIds: [ID]
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingGig]
+    searchRadius: SearchRadiusInput
+  ): PaginatedGig!
+  gigStates(programIds: [ID], filters: JSON): GigStateSections!
+  impersonator: User
+  invitationCode(id: ID!): InvitationCode!
+  invitationCodeByToken(token: String!): InvitationCode!
+  invitationCodes(
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingInvitationCode]
+  ): PaginatedInvitationCode!
+  invoiceExpense(expenseId: ID!): InvoiceExpense
+  invoiceExpenses(
+    invoiceVersionId: ID
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingInvoiceExpense]
+  ): PaginatedInvoiceExpense!
+  invoiceGigs(
+    invoiceVersionId: ID
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingInvoiceGig]
+  ): PaginatedInvoiceGig!
+  invoices(
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingInvoiceVersion]
+  ): PaginatedInvoiceVersion!
+  invoiceVersion(id: ID!): InvoiceVersion
+  invoiceVersionStats(id: ID!): InvoiceVersionStats!
+  me: User
+  myApplications(first: Int, after: ID, offset: Int): PaginatedApplication!
+  options(group: [String], includeInactive: Boolean): [OptionConfig]
+  optionsConnection(
+    group: String!
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingOption]
+  ): PaginatedOption!
+  organization(id: ID!): Organization!
+  organizationConnections(
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingProduct]
+  ): PaginatedOrganization!
+  organizationConnectionsByPrograms(
+    programIds: [ID]
+    organizationType: OrganizationType
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingProduct]
+  ): PaginatedOrganization!
+  organizationConnectionsPartners(
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingProduct]
+  ): PaginatedOrganization!
+  organizationConnectionsProgramPartners(
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingProduct]
+  ): PaginatedOrganization!
+  organizationLocation(id: ID, locationId: ID, externalId: String): OrganizationLocation
+  organizationLocations(
+    search: String
+    tagIds: [String]
+    first: Int
+    after: ID
+    offset: Int
+    filters: JSON
+    orderBy: [OrderingOrganizationLocation]
+    searchRadius: SearchRadiusInput
+  ): PaginatedOrganizationLocation!
+  organizationUser(id: ID, orgId: ID): OrganizationUser
+  orgProducts(
+    search: String
+    tagIds: [String]
+    programId: ID
+    status: String
+    first: Int
+    after: ID
+    offset: Int
+    filters: JSON
+    orderBy: [OrderingProduct]
+  ): PaginatedProduct!
+  ownerConnectionsByPrograms(
+    programIds: [ID]
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingUser]
+  ): PaginatedUser!
+  product(id: ID): Product
+  productConnectionsByPrograms(
+    programIds: [ID]
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingProduct]
+  ): PaginatedProduct!
+  products(organizationId: ID, programId: ID, gigId: ID, limit: Int, state: ProductState): [Product]
+  program(id: ID, hash: String): Program!
+  programConnections(
+    programIds: [ID]
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingProgram]
+  ): PaginatedProgram!
+  programGroup(id: ID!): ProgramGroup
+  programGroupConnections(
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingProgramGroup]
+  ): PaginatedProgramGroup!
+  programGroups(programGroupIds: [ID]): [ProgramGroup]
+  programPartnerships(
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingProgramPartnership]
+  ): PaginatedProgramPartnership!
+  programRequest(id: ID): ProgramRequest
+  programRole(programId: ID!, roleId: ID!): ProgramRole
+  programRoleConnections(
+    programIds: [ID]
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingProgramRole]
+  ): PaginatedProgramRole!
+  programs(
+    ids: [ID]
+    managerOrganizationId: ID
+    includeUnaccepted: Boolean
+    includeArchived: Boolean
+    programGroupIds: [String]
+  ): [Program]!
+  programTypes(keys: [String], includeInactive: Boolean): [State]
+  questionGroups(gigId: String, withAnswers: Boolean): [ReportGroup]
+  reportDashboard(exclude: Boolean, dashboardKey: ID, programIds: [ID!], viewport: JSON): ReportDashboard
+  reportDashboards(
+    exclude: Boolean
+    programIds: [ID!]
+    viewport: JSON
+    collection: ReportDashboardCollection
+  ): [ReportDashboard]!
+  reportForm(id: ID!): ReportForm
+  reportForms(filters: JSON, first: Int, after: ID, offset: Int, orderBy: [OrderingReportForm]): PaginatedReportForm!
+  reportStep(stepKey: String!): ReportStep
+  reportSteps: [ReportStep!]
+  role(id: ID!): Role
+  roleConnections(filters: JSON, first: Int, after: ID, offset: Int, orderBy: [OrderingRole]): PaginatedRole!
+  roleConnectionsByPrograms(
+    programIds: [ID]
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingRole]
+  ): PaginatedRole!
+  roleConnectionsByRequestUser(
+    onlyRequestable: Boolean
+    onlySelfAssignable: Boolean
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingRole]
+  ): PaginatedRole!
+  states(keys: [String], includeInactive: Boolean): [State]
+  statesConnection(search: String, first: Int, after: ID, offset: Int, filters: JSON): PaginatedState!
+  tag(id: ID): Tag
+  tags(
+    group: TagGroup!
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingTag]
+  ): PaginatedTag!
+  talentConnectionsByPrograms(
+    programIds: [ID]
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingUser]
+  ): PaginatedUser!
+  talentRosterConnections(
+    area: AreaInput
+    areaGigs: AreaGigsInput
+    talentTagSelection: SelectionInput
+    talentSelection: SelectionInput
+    first: Int
+    after: ID
+    offset: Int
+    search: String
+    orderBy: [OrderingUser]
+  ): PaginatedUser!
+  todaysLatestIncompleteCheckin: Gig
+  uiCustomization(id: ID!): UICustomization
+  user(id: ID!, gigId: ID): User
+  userCalendarDatesByMonth(year: Int!, month: Int!, userId: ID!, includeReccuring: Boolean): [UserCalendarDate!]!
+  userConnectionsByOrganization(
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingUser]
+  ): PaginatedUser!
+  userConnectionsByProgramPartners(
+    programId: ID
+    search: String
+    filters: JSON
+    first: Int
+    after: ID
+    offset: Int
+    orderBy: [OrderingUser]
+  ): PaginatedUser!
+  userOrganizationByInvoice(invoiceVersionId: ID!, managerOrganizationId: ID!): Organization
+  userOrganizationByPrograms(programIds: [ID!], managerOrganizationId: ID!): Organization
+  users(
+    organizationId: ID!
+    managementStates: [UserManagementState]
+    includeGhosts: Boolean
+    includeTalent: Boolean
+  ): [User!]
+}
+
+type Mutation {
+  activateOrganization: ID
+  addBillingContact(organizationId: String, contact: BillingContactInput!): BillingContact
+  addGigsToInvoice(programIds: [ID], filters: JSON, invoiceVersionId: ID!): Int
+  applyToGig(gigId: ID, applyHash: String, note: String): Application
+  approvalCancelGig(programIds: [ID], filters: JSON, message: String): Int!
+  approveGig(programIds: [ID], filters: JSON, message: String): Int!
+  archiveOrganizationLocation(id: ID): OrganizationLocation
+  authorizePayment(programIds: [ID], filters: JSON, willPay: Boolean): Int!
+  cancelGigs(
+    programIds: [ID]
+    filters: JSON
+    reasonKey: String
+    reasonDescription: String
+    cancellationType: String
+  ): Int
+  checkIn(gigId: ID, latitude: String!, longitude: String!): Gig
+  checkOut(gigId: ID, latitude: String!, longitude: String!): Gig
+  cloneOrganization(organizationId: ID!): Boolean
+  createGigs(gigs: [CreateGigsInput]!, uploadId: ID): GigCreationResult!
+  createInvitationCode(input: InvitationCodeInput): InvitationCode
+  createInvoice(input: CreateInvoiceVersionInput!): InvoiceVersion
+  createReportDashboardPdf(exclude: Boolean, dashboardKey: ID, programIds: [ID!], viewport: JSON): ID!
+  createRoles(roles: [RoleCreationInput!]!): Int!
+  createStripeSession(redirectUrl: String!): String!
+  deleteDraftGigs(filters: JSON!, programIds: [ID]): Int
+  deleteGigExpense(gigId: ID!, expenseId: ID!): Boolean
+  deleteInvoiceExpense(invoiceVersionId: ID!, expenseId: ID!): Boolean
+  disableInvitationCode(id: ID!): InvitationCode
+  duplicateProgram(programId: ID!): ID
+  editUserPermissions(input: EditUserPermissionsInput!): [User]
+  issueInvoice(invoiceVersionId: ID!): InvoiceVersion
+  logout: LogoutPayload
+  markInvoicePaid(invoiceVersionId: ID!): InvoiceVersion
+  rejectGigReport(programIds: [ID], filters: JSON!, message: String): Int!
+  removeGigsFromInvoice(invoiceVersionId: ID!, gigIds: [ID!]!): Boolean
+  removePartners(partnerId: ID!): Boolean!
+  removeProgramGroup(groupId: ID!): Boolean!
+  requestGigApproval(programIds: [ID], filters: JSON, message: String): Int!
+  retractInvoice(invoiceVersionId: ID!): InvoiceVersion
+  returnGig(programIds: [ID], filters: JSON, message: String): Int!
+  returnGigReport(programIds: [ID], filters: JSON!, message: String): Int!
+  saveGigReportStep(input: SaveGigReportStepInput!): GigReportStep
+  setProductActive(input: SetProductActiveInput!): [String]
+  setProgramManagementState(programId: ID!, managementState: ProgramManagementState!): ProgramRequest
+  submitGigReport(gigId: ID): Gig
+  undoReviewGigs(filters: JSON!, programIds: [ID]): Int
+  untrashGigs(filters: JSON!, programIds: [ID]): Int
+  updateBillingContact(id: ID!, organizationId: String, contact: BillingContactInput!): BillingContact
+  updateCalendarWeekdays(calendarWeekdays: [CalendarWeekday!]!): [CalendarWeekday!]!
+  updateGigExpenses(gigId: ID!, input: [GigExpenseInput], hasTalentExpenses: Boolean): [String]
+  updateGigRoster(input: UpdateGigRosterInput!, programIds: [ID], filters: JSON): Int
+  updateGigs(input: UpdateGigsInput!, programIds: [ID], filters: JSON): [Gig]
+  updateInvoice(invoiceVersionId: ID!, input: UpdateInvoiceVersionInput!): InvoiceVersion
+  updateMyAssets(assets: [UserAsset!]!): [Asset!]
+  updateMyDetails(input: UpdateMyDetailsInput!): UpdateMyDetailsPayload
+  updateRoles(role: RoleUpdateInput!, filters: JSON): Int!
+  updateUnavailableDatesByMonth(year: Int!, month: Int!, days: [Int!]!): [UserCalendarDate!]!
+  upsertDocument(input: UpsertDocumentInput!): Document
+  upsertGigExpense(
+    gigId: ID!
+    expenseId: ID
+    reimburseAmount: Float
+    chargeAmount: Float
+    input: ExpenseInput
+  ): GigExpense
+  upsertInvoiceExpense(invoiceVersionId: ID!, expenseId: ID, input: ExpenseInput): InvoiceExpense
+  upsertOrganizationLocations(input: [UpsertOrganizationLocationInput!]!): UpsertOrganizationLocationResult!
+  upsertOrganizationProducts(input: [UpsertOrganizationProductInput!]!): UpsertOrganizationProductResult!
+  upsertOrganizationUser(input: OrganizationUserInput!): OrganizationUser
+  upsertPartnerPrograms(partnerId: ID!, filters: JSON): Boolean!
+  upsertProduct(input: UpsertProductInput!): Product
+  upsertProgramGroup(groupId: ID, name: String!, programFilters: JSON): ID
+  upsertProgramRequest(input: ProgramRequestInput!): ProgramRequest
+  upsertTag(input: UpsertTagInput!): Tag
+  upsertUICustomization(input: UICustomizationInput): UICustomization!
+  upsertUserProfile(input: UserProfileInput!): UserProfile
+  verifyGigReport(
+    programIds: [ID]
+    filters: JSON!
+    message: String
+    expensePolicy: VerifyExpensePolicy
+    overriddenDuration: Float
+    overriddenTotalExpenses: Float
+  ): Int!
+  voidOrDeleteInvoice(invoiceVersionId: ID!, deleteInvoice: Boolean!): InvoiceVersion
+  withdrawApplication(applicationId: ID!): Application
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+"""
+Date custom scalar type
+"""
+scalar Date
+
+"""
+DateTime custom scalar type
+"""
+scalar DateTime
+
+"""
+Posix miliseconds
+"""
+scalar Posix
+
+type ConnectionPageInfo {
+  hasNextPage: Boolean!
+  offset: Int
+  endCursor: ID!
+  totalCount: Int!
+}
+
+input Ordering {
+  sort: String!
+  direction: Direction! = asc
+}
+
+enum Direction {
+  asc
+  desc
+  ascNullsFirst
+  descNullsLast
+}
+
+input IdSelectionInput {
+  type: SelectionType!
+  values: [ID!]!
+}
+
+input SelectionInput {
+  type: SelectionType!
+  values: [String!]!
+}
+
+type Selection {
+  type: SelectionType!
+  values: [String!]!
+}
+
+input GeoLocationInput {
+  latitude: Float!
+  longitude: Float!
+}
+
+type GeoLocation {
+  latitude: Float!
+  longitude: Float!
+}
+
+input AreaInput {
+  location: GeoLocationInput!
+  distance: Float!
+}
+
+enum SelectionType {
+  include
+  exclude
+}
+
+enum CalendarWeekday {
+  Sun
+  Mon
+  Tue
+  Wed
+  Thu
+  Fri
+  Sat
+}
+
+type Asset {
+  id: ID!
+  url: String
+  name: String
+  thumbnail: String
+  assetType: String
+  isPrimary: Boolean
+  metadata: String
+  public: Boolean
+  extension: String
+  label: String
+  status: String
+  program: Program
+  organization: Organization
+  role: Role
+}
+
+input UserAsset {
+  url: String!
+  isPrimary: Boolean
+}
+
+input BillingContactInput {
+  nickname: String
+  firstName: String
+  lastName: String
+  email: String
+  company: String
+  address1: String
+  address2: String
+  city: String
+  state: String
+  zip: String
+}
+
+type BillingContact {
+  id: ID!
+  nickname: String!
+  firstName: String
+  lastName: String
+  email: String
+  displayEmail: String
+  company: String
+  address1: String
+  address2: String
+  city: String
+  state: String
+  zip: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PaginatedBillingContactEdge {
+  cursor: ID
+  node: BillingContact!
+}
+
+type PaginatedBillingContact {
+  edges: [PaginatedBillingContactEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingBillingContactEnum {
+  nickname
+}
+
+input OrderingBillingContact {
+  sort: OrderingBillingContactEnum
+  direction: Direction
+  args: JSON
+}
+
+input UpsertDocumentInput {
+  id: ID
+  organizationId: String
+  userId: String
+  url: String!
+  name: String!
+  description: String
+}
+
+interface Document {
+  id: ID!
+  organization: Organization
+  userId: String
+  pkey: Int!
+  url: String!
+  name: String!
+  description: String
+  status: DocumentStatus!
+  createdBy: Int!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type LinkDocument implements Document {
+  id: ID!
+  organization: Organization
+  userId: String
+  pkey: Int!
+  url: String!
+  name: String!
+  description: String
+  status: DocumentStatus!
+  createdBy: Int!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type FileDocument implements Document {
+  id: ID!
+  organization: Organization
+  userId: String
+  pkey: Int!
+  url: String!
+  name: String!
+  description: String
+  status: DocumentStatus!
+  createdBy: Int!
+  createdAt: String!
+  updatedAt: String!
+  metadata: FileMetadata!
+}
+
+type FileMetadata {
+  filename: String!
+  size: Int!
+  mimetype: String!
+}
+
+enum DocumentStatus {
+  pending
+  failed
+  active
+  inactive
+}
+
+type GigActionCount {
+  actionKey: String!
+  actionKeyCount: Int!
+  actionOrder: Int!
+  actionPrimary: Boolean!
+}
+
+type Gig {
+  adminLabel: String
+  agencyGuidance: String
+  applyHash: String
+  applications: [Application!]
+  applicationCount: Int!
+  assignedApplication: Application
+  assignedGogetter: User @deprecated(reason: "Name changed. Please use talent instead. Same result.")
+  talent: User
+  createdAt: String!
+  createdBy: User
+  requestedBy: User
+  cancelledAt: String
+  cancelledBy: User
+  cancelledByParty: ProgramInvolvedParty
+  cancellationReason: Option
+  cancellationReasonDescription: String
+  checkinStatus: CheckInOutStatus
+  checkoutStatus: CheckInOutStatus
+  customLocationName: String
+  deletedAt: String
+  details: String
+  expenses: [GigExpense!]!
+  expenseNotes: String
+  editable: Boolean!
+  id: ID!
+  isReportComplete: Boolean!
+  kind: String
+  location: Location
+  locationNameDistance: Int
+  timezone: String
+  timezoneOffset: Int
+  windowStartTime: String
+  windowEndTime: String
+  windowLocalStartTime: String
+  windowLocalEndTime: String
+  startTime: String
+  duration: Int
+  endTime: String
+  localStartTime: String
+  localEndTime: String
+  myApplication: Application
+  myRate: Float
+  state: GigState
+  workflowState: String!
+  workflowStateKey: String!
+  workflowStateNameKey: String!
+  workflowStateGroup: String!
+  workflowStateSection: String!
+  stateGroup: String!
+  notes: String
+  talentOrganization: Organization
+  talentOrganizationRate: Float
+  talentContacts: [User!]!
+  organization: Organization
+  organizationLocation: OrganizationLocation
+  organizationLocationId: ID
+  owner: User
+  ownerOrganization: Organization
+  ownerOrganizationRate: Float!
+  pkey: Int
+  products: [Product!]!
+  program: Program!
+  programRequest: ProgramRequest!
+  programRole: ProgramRole
+  questions: [Question!]!
+  talentRate: Float
+  approvalRequestedAt: String
+  approvalReviewedAt: String
+  approvalReviewedBy: User
+  approvalReviewMessage: String
+  report: [ReportGroup!]!
+  reportReviewedAt: String
+  reportReviewedBy: User
+  reportReviewMessage: String
+  reportState: GigReportState!
+  reportAnswers(state: AnswerState): [Answer!]!
+  role: Role!
+  title(useDefault: Boolean): String
+  totalExpenses: Float
+  updatedAt: String!
+  visibility: GigVisibility
+  interactions: Float
+  samples: Float
+  unitsSold: Float
+  compareWorkflowStateOrder(compareToKey: String!): Int!
+  documents: [Document!]
+  blocked: Boolean
+  programId: ID!
+  talentExpenses: Boolean
+  invoiceManagementState: String
+  totalHours: Float!
+  ownerLaborAmount: Float!
+  ownerExpenseAmount: Float!
+  ownerAmount: Float!
+  talentLocation: Location
+  talentLocationDistance: Float
+  talentTagSelection: TagSelection
+  talentSelection: UserSelection
+  windowAssign: Boolean!
+  distanceFromSearchCenterInMeters: Float
+}
+
+type UserSelection {
+  type: SelectionType!
+  values: [User!]!
+}
+
+type TagSelection {
+  type: SelectionType!
+  values: [Tag!]!
+}
+
+type Pass {
+  color1: String!
+  color2: String!
+  color3: String!
+}
+
+input CreateGigsInput {
+  talentOrganizationId: ID
+  copies: Int
+  programId: ID!
+  roleId: ID!
+  talentRate: Float
+  myRate: Float
+  timezone: String
+  windowStartTime: String
+  windowEndTime: String
+  startTime: String
+  duration: Int
+
+  """
+  productSelction and productIds are mutualy exclusive options to specify the products on a gig.
+  productIds will take precedent out of concern for compatibility, but is considered deprecated.
+  """
+  productSelection: IdSelectionInput
+  productIds: [ID] @deprecated(reason: "Please use productSelection as it allows for exclusions")
+
+  """
+  If an organizationLocationId is provided, the location id and name of that organization location are used for the gig.
+  Any additional location input is disregarded in that case.
+  """
+  organizationLocationId: ID
+
+  """
+  Structured location input to be used on the gig. If an externalId is provided, the corresponding organization location
+  will be updated with the new data.
+  """
+  location: CreateLocationInput
+  title: String
+  notes: String
+  agencyGuidance: String
+  expenseNotes: String
+  locationName: String
+  ownerId: ID
+  talentId: ID
+  documents: [UpsertDocumentInput!]
+  windowAssign: Boolean
+}
+
+input UpdateGigsInput {
+  programId: ID
+  talentId: ID
+  talentOrganizationId: ID
+  roleId: ID
+  talentRate: Float
+  myRate: Float
+  timezone: String
+  windowStartTime: String
+  windowEndTime: String
+  startTime: String
+  duration: Int
+  productIds: [ID]
+  location: CreateLocationInput
+  title: String
+  notes: String
+  agencyGuidance: String
+  expenseNotes: String
+  locationName: String
+  message: String
+  ownerId: ID
+  documents: [UpsertDocumentInput!]
+  overriddenDuration: Float
+  talentExpenses: Boolean
+  windowAssign: Boolean
+}
+
+input UpdateGigRosterInput {
+  visibility: GigVisibility!
+  sendNotification: Boolean!
+  updateAccessFilter: Boolean!
+  talentLocation: CreateLocationInput
+  talentLocationDistance: Float
+  talentTagSelection: SelectionInput
+  talentSelection: SelectionInput
+  message: String
+  replyTo: String
+}
+
+type CheckInOutStatus {
+  time: String!
+  latitude: Float
+  longitude: Float
+}
+
+enum GigReportState {
+  pending
+  submitted
+  returned
+  verified
+  rejected
+}
+
+enum GigVisibility {
+  private
+  roster
+}
+
+enum ProgramInvolvedParty {
+  agency
+  client
+  gogetter
+}
+
+enum VerifyExpensePolicy {
+  alreadyCovered
+  gogetterReimbursement
+}
+
+type GigCreationResult {
+  uploadId: ID!
+  gigIds: [ID!]!
+}
+
+type PaginatedGigEdge {
+  cursor: ID
+  node: Gig!
+}
+
+type PaginatedGig {
+  edges: [PaginatedGigEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingGigEnum {
+  id
+  starttime
+  startdate
+  combinedtime
+  updatedat
+}
+
+input OrderingGig {
+  sort: OrderingGigEnum
+  direction: Direction
+  args: JSON
+}
+
+type GigStateSections {
+  active: GigSection!
+  finished: GigSection!
+  other: GigSection!
+}
+
+type GigSection {
+  count: Int!
+  groups: [GigGroup!]!
+}
+
+type GigGroup {
+  count: Int!
+  key: String!
+  states: [GigState!]!
+}
+
+type GigState {
+  key: String
+  count: Int!
+  isActionable: Boolean
+}
+
+type Location {
+  id: ID!
+  name: String!
+  adminLabel: String
+  address: String!
+  addressJson: JSON
+  latitude: Float
+  longitude: Float
+  externalId: String
+  city: String
+  state: String
+  country: String
+}
+
+input CreateLocationInput {
+  externalId: ID
+  name: String
+  address: String
+  addressJson: JSON
+  latitude: Float
+  longitude: Float
+}
+
+type OptionConfig {
+  group: String!
+  key: String!
+  label: String!
+  order: Int!
+  meta: JSON
+}
+
+input OptionInput {
+  key: String
+  description: String
+  label: String
+  group: String
+}
+
+type Option {
+  group: String!
+  key: String!
+  description: String
+  active: Boolean
+  label: String!
+}
+
+type PaginatedOptionEdge {
+  cursor: ID
+  node: Option!
+}
+
+type PaginatedOption {
+  edges: [PaginatedOptionEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingOptionEnum {
+  key
+  group
+  order
+}
+
+input OrderingOption {
+  sort: OrderingOptionEnum
+  direction: Direction
+  args: JSON
+}
+
+type Organization {
+  id: ID!
+  type: OrganizationType!
+  name: String!
+  displayName: String
+  adminLabel: String
+  website: String
+  description: String
+  products: [Product!]!
+  programs(includeArchived: Boolean): [Program!]!
+  roles(active: Boolean, pseudo: Boolean): [Role!]!
+  roster: [User]
+  creators(programIds: [ID]): [User]
+  billingContacts: [BillingContact]
+  availabilityCalendarActive: Boolean
+  invoicingActive: Boolean!
+  uiCustomization: UICustomization
+  industry: Option
+  hasInvitedUsers: Boolean!
+  active: Boolean!
+  hasAcceptedTerms: Boolean!
+  partnershipsVisible: Boolean!
+  programGroupsVisible: Boolean!
+  financialPackageActive: Boolean!
+  programCreationActive: Boolean!
+  workspacesActive: Boolean!
+  gigRequestsActive: Boolean!
+  gigSelfAssignmentActive: Boolean!
+  brandingActive: Boolean!
+  isWorkspace: Boolean!
+  oneOffLocations: Boolean!
+}
+
+input OrganizationInput {
+  name: String!
+  website: String
+  description: String
+  uiCustomizationId: ID
+  industryId: ID
+  industryKey: String
+  teamSizeKey: String
+  hasAcceptedTerms: Boolean!
+}
+
+enum OrganizationType {
+  client
+  agency
+}
+
+type PaginatedOrganizationEdge {
+  cursor: ID
+  node: Organization!
+}
+
+type PaginatedOrganization {
+  edges: [PaginatedOrganizationEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingOrganizationEnum {
+  name
+}
+
+input OrderingOrganization {
+  sort: OrderingOrganizationEnum
+  direction: Direction
+  args: JSON
+}
+
+type OrganizationLocation {
+  id: ID!
+  location: Location!
+  name: String!
+  internalIdentifier: String
+  owner: User
+  tags: [Tag]
+  contacts: [OrganizationLocationContact]
+  organization: Organization
+  schedulingNotes: String
+  otherNotes: String
+  products: [Product!]!
+  distanceFromSearchCenterInMeters: Float
+}
+
+type OrganizationLocationsEdges {
+  cursor: ID
+  node: OrganizationLocation
+}
+
+type OrganizationLocationsResult {
+  edges: [OrganizationLocationsEdges]
+  pageInfo: ConnectionPageInfo
+}
+
+type OrganizationLocationContact {
+  name: String!
+  title: String
+  email: String
+  phone: String
+  url: String
+}
+
+input UpsertOrganizationLocationInput {
+  id: ID
+  location: CreateLocationInput!
+  name: String!
+  internalIdentifier: String
+  ownerId: ID
+  tagIds: [ID]
+  contacts: [OrganizationLocationContactInput]
+  schedulingNotes: String
+  otherNotes: String
+  productIds: [ID]
+}
+
+input OrganizationLocationContactInput {
+  name: String!
+  title: String
+  email: String
+  phone: String
+  url: String
+}
+
+input ArchiveOrganizationLocationInput {
+  locationId: ID!
+}
+
+type UpsertOrganizationLocationResult {
+  errors: [UpsertOrganizationLocationError!]!
+}
+
+type UpsertOrganizationLocationError {
+  index: Int!
+  error: String!
+}
+
+type PaginatedOrganizationLocationEdge {
+  cursor: ID
+  node: OrganizationLocation!
+}
+
+type PaginatedOrganizationLocation {
+  edges: [PaginatedOrganizationLocationEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingOrganizationLocationEnum {
+  createdat
+}
+
+input OrderingOrganizationLocation {
+  sort: OrderingOrganizationLocationEnum
+  direction: Direction
+  args: JSON
+}
+
+type OrganizationUser {
+  id: ID
+  organizationUserId: ID!
+  isAdmin: Boolean
+  type: OrganizationUserType
+  organizationId: ID
+  organizationType: OrganizationType
+  organizationNotes: String
+  defaultRate: Float
+  salaried: Boolean
+  tags: [Tag]
+  documents: [Document]
+  legalName: String
+  employeeId: String
+  canRequest: Boolean!
+  canSelfAssign: Boolean!
+}
+
+input OrganizationUserInput {
+  id: ID!
+  organizationId: String!
+  tagIds: [ID]
+  organizationNotes: String
+  defaultRate: Float
+  salaried: Boolean
+  documents: [UpsertDocumentInput]
+  legalName: String
+  employeeId: String
+}
+
+enum OrganizationUserType {
+  super_admin
+  owner
+  admin
+  manager
+  member
+  limited_user
+  gogetter
+}
+
+type Product {
+  id: ID!
+  displayName: String
+  sku: String
+  name: String!
+  active: Boolean!
+  msrp: Float
+  organization: Organization
+  description: String
+  category: OptionConfig
+  tags: [Tag]
+  documents: [Document]
+  meta: JSON
+  programs: [Program!]
+}
+
+input UpsertProductInput {
+  id: ID
+  displayName: String
+  sku: String
+  msrp: Float
+  name: String
+  active: Boolean
+  organizationId: ID
+  description: String
+  categoryKey: ID
+  documentIds: [ID]
+  tagIds: [ID]
+  programIds: [ID]
+  meta: JSON
+}
+
+input SetProductActiveInput {
+  ids: [ID]!
+  active: Boolean!
+}
+
+enum ProductState {
+  active
+  inactive
+}
+
+input UpsertOrganizationProductInput {
+  id: ID
+  sku: String
+  name: String!
+  msrp: Float
+  active: Boolean
+  description: String
+  tagIds: [ID]
+}
+
+type UpsertOrganizationProductResult {
+  errors: [UpsertOrganizationProductError!]!
+}
+
+type UpsertOrganizationProductError {
+  index: Int!
+  error: String!
+}
+
+type PaginatedProductEdge {
+  cursor: ID
+  node: Product!
+}
+
+type PaginatedProduct {
+  edges: [PaginatedProductEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingProductEnum {
+  name
+}
+
+input OrderingProduct {
+  sort: OrderingProductEnum
+  direction: Direction
+  args: JSON
+}
+
+type Program {
+  id: ID!
+  startDate: String
+  endDate: String
+  name: String
+  description: String
+  logistics: String
+  state: String
+  brandEducation: String
+  materialsCoordination: String
+  reimbursementNotes: String
+  adminLabel: String
+  instructions: String
+  requirements: String
+  statsHash: String
+  organizationId: ID
+  organization: Organization
+  agency: Organization
+  client: Organization
+  executionType: ProgramExecutionType!
+  accountingCode: String
+  archived: Boolean
+  managementState: ProgramManagementState!
+  isApprovalRequired: Boolean!
+  expenses: String
+  locationDescription: String
+  gigs(
+    except: [ID]
+    before: String
+    after: String
+    includeNoDate: Boolean
+    limit: Int
+    searchRadius: SearchRadiusInput
+    locationName: String
+    assignedUsers: [ID]
+    createdBy: [ID]
+    unfilled: Boolean
+    ready: Boolean
+    managementStates: [String!]
+    reportStates: [GigReportState!]
+  ): [Gig!]!
+  gigsCount(
+    before: String
+    after: String
+    includeNoDate: Boolean
+    limit: Int
+    searchRadius: SearchRadiusInput
+    locationName: String
+    assignedUsers: [ID]
+    createdBy: [ID]
+    unfilled: Boolean
+    ready: Boolean
+    managementStates: [String!]
+    reportStates: [GigReportState!]
+  ): Int!
+  products: [Product!]!
+  roles: [ProgramRole!]!
+  gigStats: GigStats
+  isOwner: Boolean!
+  trainingDocuments: [Document!]!
+  trainingDocumentsCount: Int!
+  keyMetric: Option
+  demoKit: ProgramDemoKit
+  trainingType: [Option]
+  sampleProductsSource: Option
+  minimumNotice: Option
+  isContact(id: ID!): Boolean
+}
+
+enum ProgramExecutionType {
+  solo
+  maestro
+  pro
+}
+
+type GigStats {
+  past: Int!
+  upcoming: Int!
+}
+
+input SearchRadiusInput {
+  radius: Float!
+  longitude: Float!
+  latitude: Float!
+  name: String
+}
+
+type PaginatedProgramEdge {
+  cursor: ID
+  node: Program!
+}
+
+type PaginatedProgram {
+  edges: [PaginatedProgramEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingProgramEnum {
+  name
+}
+
+input OrderingProgram {
+  sort: OrderingProgramEnum
+  direction: Direction
+  args: JSON
+}
+
+type ProgramRequest {
+  id: ID!
+  executionType: ProgramExecutionType!
+  isApprovalRequired: Boolean
+  isOwnedByCurrentOrganization: Boolean!
+  archived: Boolean!
+  managementState: ProgramManagementState
+  meta: JSON
+  name: String
+  description: String
+  typeKey: String
+  type: ProgramType
+  startDate: Date
+  endDate: Date
+  locationDescription: String
+  keyMetric: ProgramKeyMetric
+  stateKeys: [String]
+  states: [State]
+  preferredAgenciesDescription: String
+  talentOrganizations: [Organization]
+  partnerOrganizations: [Organization!]!
+  budget: Float
+  estimatedGigsCount: Int
+  singleTalentOrganization: Boolean!
+  roles: [ProgramRole]
+  schedulingPolicy: Option
+  handOffPolicy: Option
+  budgetCap: ProgramBudgetCap
+  preliminaryScheduleDocuments: [Document]
+  minimumNotice: Option
+  sampleProductsSource: Option
+  gigBudget: Int
+  demoKit: ProgramDemoKit
+  setupReferenceImages: [Document]
+  expenses: String
+  products: [Product]
+  trainingType: [Option]
+  trainingMessage: String
+  trainingDocuments: [Document]
+  team: [ProgramTeamMember]
+  payer: Option
+  accountingCode: String
+  billingContact: BillingContact
+  additionalContactEmails: [String]
+  createdBy: User
+  highLevelStats: ProgramHighLevelStats!
+  myPartner: ProgramPartner
+  partnerRates: [ProgramRolePartnerRate!]!
+  createdAt: String!
+  nameChangedAt: String
+  programGroups: [ProgramGroup!]!
+  internalFiles: [ProgramInternalFile!]
+}
+
+type ProgramInternalFile {
+  url: String!
+  caption: String!
+}
+
+enum ProgramManagementState {
+  draft
+  handed_off
+  sow
+  accepted
+}
+
+input ProgramRequestInput {
+  id: ID
+  organizationId: String!
+  executionType: ProgramExecutionType
+  archived: Boolean
+  managementState: ProgramManagementState
+  isApprovalRequired: Boolean
+  meta: JSON
+  name: String
+  description: String
+  typeKey: String
+  startDate: Date
+  endDate: Date
+  locationDescription: String
+  keyMetric: ProgramKeyMetricInput
+  stateKeys: [String]
+  preferredAgenciesDescription: String
+  programPartnerIds: [String]
+  budget: Float
+  estimatedGigsCount: Int
+  roles: [ProgramRoleInput]
+  schedulingPolicy: OptionInput
+  handOffPolicy: OptionInput
+  budgetCap: ProgramBudgetCapInput
+  preliminaryScheduleDocumentIds: [ID]
+  minimumNotice: OptionInput
+  sampleProductsSource: OptionInput
+  gigBudget: Int
+  demoKit: ProgramDemoKitInput
+  setupReferenceImageIds: [ID]
+  expenses: String
+  productIds: [ID]
+  trainingType: [OptionInput]
+  trainingMessage: String
+  trainingDocumentIds: [ID]
+  team: [ProgramTeamMemberInput]
+  payer: OptionInput
+  accountingCode: String
+  additionalContactEmails: [String]
+  billingContactId: ID
+  programGroupIds: [ID!]
+  internalFiles: [ProgramInternalFileInput!]
+  partnerRates: [ProgramRolePartnerRateInput!]
+}
+
+input ProgramInternalFileInput {
+  url: String!
+  caption: String!
+  programGroupId: ID
+}
+
+input ProgramKeyMetricInput {
+  key: String
+  description: String
+  targetValue: Int
+  unit: ProgramKeyMetricUnit
+}
+
+type ProgramKeyMetric {
+  key: String
+  description: String
+  targetValue: Int
+  unit: ProgramKeyMetricUnit
+}
+
+enum ProgramKeyMetricUnit {
+  gig
+  hour
+}
+
+input ProgramBudgetCapInput {
+  value: Int
+  capType: ProgramBudgetCapType
+}
+
+type ProgramBudgetCap {
+  value: Int
+  capType: ProgramBudgetCapType
+}
+
+enum ProgramBudgetCapType {
+  cost
+  gigs
+}
+
+input ProgramDemoKitInput {
+  client: String
+  agency: String
+  venue: String
+  shippingRequirements: OptionInput
+}
+
+type ProgramDemoKit {
+  client: String
+  agency: String
+  venue: String
+  shippingRequirements: Option
+}
+
+input ProgramTeamMemberInput {
+  userId: ID
+  isContact: Boolean
+  userType: String
+  firstName: String
+  lastName: String
+}
+
+type ProgramTeamMember {
+  userId: ID
+  isContact: Boolean
+  userType: String
+  firstName: String
+  lastName: String
+  canSelfAssign: Boolean!
+  canRequest: Boolean!
+}
+
+type ProgramPartner {
+  id: ID!
+  name: String!
+  type: ProgramPartnerType!
+  managers: [ProgramManager!]
+}
+
+type ProgramManager {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String
+}
+
+enum ProgramPartnerType {
+  client
+  agency
+}
+
+type ProgramHighLevelStats {
+  id: ID!
+  gigs: Int!
+  interactions: Int
+  samples: Int
+  unitsSold: Int
+}
+
+type PaginatedProgramRequestEdge {
+  cursor: ID
+  node: ProgramRequest!
+}
+
+type PaginatedProgramRequest {
+  edges: [PaginatedProgramRequestEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingProgramRequestEnum {
+  name
+}
+
+input OrderingProgramRequest {
+  sort: OrderingProgramRequestEnum
+  direction: Direction
+  args: JSON
+}
+
+type ProgramRolePartnerRate {
+  role: Role!
+  talentOrganization: Organization!
+  talentOrganizationRate: Float
+  ownerOrganization: Organization!
+  ownerOrganizationRate: Float
+  myRate: Float
+}
+
+input ProgramRolePartnerRateInput {
+  roleId: ID!
+  talentOrganizationId: ID!
+  talentOrganizationRate: Float
+  ownerOrganizationRate: Float
+}
+
+type ProgramRole {
+  id: ID!
+  role: Role
+  roleId: ID!
+  program: Program
+  title: String!
+  profile: String
+  duties: String
+  uniform: Option
+  reportingNotes: String
+  adminLabel: String
+  hoursPerGig: Float
+  volume: Int
+  organization: Organization
+  questions: [Question!]!
+  gigs: [Gig!]!
+  partnerRates: [ProgramRolePartnerRate!]
+  allowExpenses: Boolean!
+  requestable: Boolean!
+  selfAssignable: Boolean!
+  color: String!
+  iconName: String!
+}
+
+input ProgramRoleInput {
+  roleId: ID
+  reportFormId: ID
+  profile: String
+  duties: String
+  uniform: OptionInput
+  reportingNotes: String
+  adminLabel: String
+  hoursPerGig: Float
+  volume: Int
+  requestable: Boolean
+  selfAssignable: Boolean
+}
+
+type PaginatedProgramRoleEdge {
+  cursor: ID
+  node: ProgramRole!
+}
+
+type PaginatedProgramRole {
+  edges: [PaginatedProgramRoleEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingProgramRoleEnum {
+  title
+}
+
+input OrderingProgramRole {
+  sort: OrderingProgramRoleEnum
+  direction: Direction
+  args: JSON
+}
+
+type ProgramType {
+  key: String!
+  name: String!
+  active: Boolean
+}
+
+input AnswerInput {
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  payload: String!
+  state: AnswerState!
+}
+
+enum AnswerState {
+  pending
+  na
+  unasked
+  answered
+}
+
+interface Answer {
+  id: ID!
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  state: AnswerState!
+  payload: String
+}
+
+type TextAnswer implements Answer {
+  id: ID!
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  state: AnswerState!
+  payload: String
+  text: String
+}
+
+type IntAnswer implements Answer {
+  id: ID!
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  state: AnswerState!
+  payload: String
+  int: Int
+}
+
+type FloatAnswer implements Answer {
+  id: ID!
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  state: AnswerState!
+  payload: String
+  float: Float
+}
+
+type ImageAnswer implements Answer {
+  id: ID!
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  state: AnswerState!
+  payload: String
+  images: [String!]
+}
+
+type BooleanAnswer implements Answer {
+  id: ID!
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  state: AnswerState!
+  payload: String
+  boolean: Boolean
+}
+
+type MoneyAnswer implements Answer {
+  id: ID!
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  state: AnswerState!
+  payload: String
+  money: Float
+}
+
+type MultipleChoiceOneAnswer implements Answer {
+  id: ID!
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  state: AnswerState!
+  payload: String
+  choice: String
+}
+
+type MultipleChoiceManyAnswer implements Answer {
+  id: ID!
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  state: AnswerState!
+  payload: String
+  choices: [String!]
+}
+
+type ContactAnswer implements Answer {
+  id: ID!
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  state: AnswerState!
+  payload: String
+  name: String
+  phone: String
+  email: String
+}
+
+type AgreementSignatureAnswer implements Answer {
+  id: ID!
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  state: AnswerState!
+  payload: String
+  signature: String
+}
+
+type ToggleAnswer implements Answer {
+  id: ID!
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  state: AnswerState!
+  payload: String
+  toggle: Boolean
+}
+
+type LocationAnswer implements Answer {
+  id: ID!
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  state: AnswerState!
+  payload: String
+  location: String
+}
+
+type ExpenseAnswer implements Answer {
+  id: ID!
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  state: AnswerState!
+  payload: String
+  receipts: [Receipt]!
+  amount: Float
+}
+
+type Receipt {
+  caption: String
+  url: String
+}
+
+enum TemperatureUnit {
+  kelvin
+  fahrenheit
+  celsius
+}
+
+type TemperatureAnswer implements Answer {
+  id: ID!
+  reportId: ID!
+  questionId: ID!
+  productId: ID
+  state: AnswerState!
+  payload: String
+  raw: Float
+  unit: TemperatureUnit
+  kelvin: Float
+}
+
+type ReportDashboard {
+  key: String!
+  title: String!
+  description: String
+  collection: ReportDashboardCollection!
+  url: String!
+  pdfUrl: String!
+  viewport: JSON!
+  imageQuestions: [ReportDashboardImageQuestion]!
+  downloadPdf: Boolean!
+}
+
+type ReportDashboardImageQuestion {
+  id: ID!
+  title: String!
+  images: [ReportDashboardImage!]
+}
+
+type ReportDashboardImage {
+  id: ID!
+  gigId: ID!
+  gigStartTime: String
+  gigEndTime: String
+  gigTimeZone: String
+  locationName: String
+  locationAddress: String
+  locationExternalId: String
+  locationInternalIdentifier: String
+  gogetterId: ID
+  gogetterName: String
+  urls: [String]!
+}
+
+enum ReportDashboardCollection {
+  reports
+  financials
+}
+
+type ReportForm {
+  id: ID!
+  name: String!
+  searchOrder: Int
+  reportQuestions: [Question!]
+}
+
+type PaginatedReportFormEdge {
+  cursor: ID
+  node: ReportForm!
+}
+
+type PaginatedReportForm {
+  edges: [PaginatedReportFormEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingReportFormEnum {
+  name
+  searchorder
+}
+
+input OrderingReportForm {
+  sort: OrderingReportFormEnum
+  direction: Direction
+  args: JSON
+}
+
+type ReportGroup {
+  id: ID!
+  name: String!
+  productId: ID
+  productName: String
+  subgroups: [ReportSubgroup!]!
+}
+
+type ReportSubgroup {
+  id: ID!
+  name: String!
+  type: ReportSubgroupType!
+  questions: [ReportGroupQuestion!]!
+}
+
+enum ReportSubgroupType {
+  simple
+  sidebar
+  stats
+  sibling
+}
+
+type ReportGroupQuestion implements Question {
+  id: ID!
+  title: String!
+  gogetterTitle: String
+  shortTitle: String
+  helper: String
+  footer: String
+  eachProduct: Boolean!
+  when: When!
+  optional: Boolean!
+  inputPlaceholder: String
+  options: [String]
+  answerType: AnswerType!
+  answerJson: String
+  answerState: String
+  notApplicableDesc: String
+}
+
+type ReportStep {
+  key: String!
+  name: String!
+  shortDesc: String!
+  managementDesc: String!
+  order: Int!
+  questions: [FullQuestion!]!
+}
+
+enum When {
+  start
+  end
+}
+
+enum AnswerType {
+  image
+  number
+  text
+  multiple_choice_one
+  multiple_choice_many
+  expense
+  money
+  contact
+  agreement_signature
+  toggle
+  location
+  temperature
+}
+
+interface Question {
+  id: ID!
+  title: String!
+  shortTitle: String
+  gogetterTitle: String
+  helper: String
+  footer: String
+  eachProduct: Boolean!
+  when: When!
+  answerType: AnswerType!
+  optional: Boolean!
+  notApplicableDesc: String
+}
+
+type FullQuestion implements Question {
+  id: ID!
+  key: String
+  title: String!
+  shortTitle: String
+  gogetterTitle: String
+  helper: String
+  footer: String
+  eachProduct: Boolean!
+  when: When!
+  answerType: AnswerType!
+  optional: Boolean!
+  inputPlaceholder: String
+  options: [String]
+  notApplicableDesc: String
+  bombonAST: JSON
+  roleIds: [ID!]!
+}
+
+type TextQuestion implements Question {
+  id: ID!
+  title: String!
+  shortTitle: String
+  gogetterTitle: String
+  helper: String
+  footer: String
+  eachProduct: Boolean!
+  when: When!
+  answerType: AnswerType!
+  optional: Boolean!
+  inputPlaceholder: String
+  notApplicableDesc: String
+}
+
+type NumberQuestion implements Question {
+  id: ID!
+  title: String!
+  shortTitle: String
+  gogetterTitle: String
+  helper: String
+  footer: String
+  eachProduct: Boolean!
+  when: When!
+  answerType: AnswerType!
+  optional: Boolean!
+  inputPlaceholder: String
+  notApplicableDesc: String
+}
+
+type ImageQuestion implements Question {
+  id: ID!
+  title: String!
+  shortTitle: String
+  gogetterTitle: String
+  helper: String
+  footer: String
+  eachProduct: Boolean!
+  when: When!
+  answerType: AnswerType!
+  optional: Boolean!
+  notApplicableDesc: String
+}
+
+type MultipleChoiceQuestion implements Question {
+  id: ID!
+  title: String!
+  shortTitle: String
+  gogetterTitle: String
+  helper: String
+  footer: String
+  eachProduct: Boolean!
+  when: When!
+  answerType: AnswerType!
+  optional: Boolean!
+  options: [String]
+  notApplicableDesc: String
+}
+
+type ExpenseQuestion implements Question {
+  id: ID!
+  title: String!
+  shortTitle: String
+  gogetterTitle: String
+  helper: String
+  footer: String
+  eachProduct: Boolean!
+  when: When!
+  answerType: AnswerType!
+  optional: Boolean!
+  inputPlaceholder: String
+  notApplicableDesc: String
+}
+
+input ReportQuestionRolesInput {
+  id: ID!
+  roleIds: [ID!]
+}
+
+type RolePartnerRate {
+  ownerOrganization: Organization!
+  ownerOrganizationRate: Float
+  talentOrganization: Organization!
+  talentOrganizationRate: Float
+  myRate: Float
+}
+
+type Role {
+  id: ID!
+  title: String!
+  profile: String
+  duties: String
+  uniform: String
+  uniformKey: String
+  organization: Organization
+  questions: [Question!]!
+  gigs: [Gig!]!
+  partnerRates: [RolePartnerRate!]
+  allowExpenses: Boolean!
+  requestable: Boolean!
+  selfAssignable: Boolean!
+  reportForm: ReportForm
+}
+
+input RoleCreationInput {
+  title: String!
+  profile: String
+  duties: String
+  uniform: String
+  uniformKey: String
+  allowExpenses: Boolean
+  requestable: Boolean
+  selfAssignable: Boolean
+  reportFormId: ID
+}
+
+input RoleUpdateInput {
+  id: ID!
+  title: String
+  profile: String
+  duties: String
+  uniform: String
+  uniformKey: String
+  allowExpenses: Boolean
+  requestable: Boolean
+  selfAssignable: Boolean
+  reportFormId: ID
+}
+
+type PaginatedRoleEdge {
+  cursor: ID
+  node: Role!
+}
+
+type PaginatedRole {
+  edges: [PaginatedRoleEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingRoleEnum {
+  title
+}
+
+input OrderingRole {
+  sort: OrderingRoleEnum
+  direction: Direction
+  args: JSON
+}
+
+type State {
+  id: ID!
+  key: String!
+  name: String!
+  active: Boolean
+}
+
+type PaginatedStateEdge {
+  cursor: ID
+  node: State!
+}
+
+type PaginatedState {
+  edges: [PaginatedStateEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingStateEnum {
+  key
+}
+
+input OrderingState {
+  sort: OrderingStateEnum
+  direction: Direction
+  args: JSON
+}
+
+type Tag {
+  id: ID!
+  name: String!
+  description: String
+  color: String
+  groups: [TagGroup!]!
+}
+
+enum TagGroup {
+  roles
+  products
+  locations
+  documents
+  programs
+  users
+}
+
+input UpsertTagInput {
+  id: ID
+  name: String
+  description: String
+  color: String
+  groups: [TagGroup!]
+  organizationId: ID
+}
+
+type PaginatedTagEdge {
+  cursor: ID
+  node: Tag!
+}
+
+type PaginatedTag {
+  edges: [PaginatedTagEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingTagEnum {
+  name
+  description
+}
+
+input OrderingTag {
+  sort: OrderingTagEnum
+  direction: Direction
+  args: JSON
+}
+
+type UserProfile {
+  selfSummary: String
+  shirtSize: String
+  birthday: Date
+  canDrive: Boolean
+  hasCar: Boolean
+  areas: String
+  languages: [Option]
+  address: String
+  apartment: String
+  city: String
+  state: String
+  zip: String
+  country: String
+  calendarWeekdays: [CalendarWeekday!]!
+  flexibleTravel: Boolean
+  coordinates: Coordinates
+  shipHome: Boolean
+  shippingAddress: String
+}
+
+type Coordinates {
+  latitude: Float!
+  longitude: Float!
+}
+
+input UserProfileInput {
+  selfSummary: String
+  shirtSize: String
+  birthday: Date
+  canDrive: Boolean
+  hasCar: Boolean
+  areas: String
+  languageKeys: [String]
+  address: String
+  apartment: String
+  addressJson: JSON
+  longitude: Float
+  latitude: Float
+  flexibleTravel: Boolean
+  shipHome: Boolean
+  shippingAddress: String
+  shippingAddressComponents: JSON
+}
+
+input LoginInput {
+  clientMutationId: String
+  email: String!
+  password: String!
+  acceptedTOS: Boolean
+}
+
+input ImpersonateInput {
+  clientMutationId: String
+  email: String!
+  impersonation: String!
+  password: String!
+}
+
+type LoginPayload {
+  me: User!
+  jwt: String!
+  clientMutationId: String
+}
+
+type LogoutPayload {
+  id: ID!
+}
+
+input MagicLoginInput {
+  clientMutationId: String
+  token: String!
+}
+
+type MagicLoginPayload {
+  me: User
+  jwt: String
+  loginError: MagicLoginErrorType
+  continueUrl: String
+}
+
+enum MagicLoginErrorType {
+  expired
+  alreadyUsed
+}
+
+input SendMagicLinkInput {
+  clientMutationId: String
+  email: String!
+  continueUrl: String
+  acceptedTOS: Boolean
+}
+
+input InviteInput {
+  organizationId: ID!
+  userType: OrganizationUserType!
+  programIds: [ID!]
+  emails: [String]!
+  reportingProgramId: ID
+}
+
+input ResendInviteInput {
+  organizationId: ID!
+  programIds: [ID!]
+  id: ID!
+  reportingProgramId: ID
+}
+
+input EditUserPermissionsInput {
+  userIds: [ID!]!
+  userType: OrganizationUserType!
+  programIds: [ID!]
+  reportingProgramId: ID
+  contactOnProgramIds: [ID!]
+  canRequest: Boolean
+  canSelfAssign: Boolean
+}
+
+input RemoveUserInput {
+  userIds: [ID]!
+  organizationId: String!
+}
+
+type InvitePayloadItem {
+  id: ID
+  displayName: String
+  email: String!
+  inviteResponseStatus: InviteResponseStatus!
+}
+
+enum InviteResponseStatus {
+  invited
+  added
+  existing
+  failed
+}
+
+type ResendInvitePayloadItem {
+  id: ID
+  inviteResponseStatus: InviteResponseStatus!
+}
+
+input RegistrationInput {
+  email: String!
+  password: String!
+  firstName: String!
+  lastName: String!
+  phone: String
+  continueUrl: String
+  clientMutationId: String
+}
+
+input SignInWithInvitationCodeInput {
+  invitationCodeToken: String!
+  phone: String!
+  phoneVerificationCode: String!
+}
+
+input RegisterWithInvitationCodeInput {
+  invitationCodeToken: String!
+  phone: String!
+  phoneVerificationCode: String!
+  firstName: String!
+  lastName: String!
+}
+
+type CodeRequestResult {
+  userExists: Boolean!
+  nextAllowedRetry: Float!
+}
+
+type InvitationCodeSignIn {
+  me: User!
+  jwt: String!
+}
+
+type RegistrationPayload {
+  me: User!
+  jwt: String
+  clientMutationId: String
+}
+
+input ResetPasswordEmailInput {
+  email: String!
+  continueUrl: String
+  clientMutationId: String
+}
+
+input ChangePasswordWithTokenInput {
+  clientMutationId: String
+  newPassword: String!
+  token: String!
+}
+
+type ChangePasswordWithTokenPayload {
+  clientMutationId: String
+  jwt: String!
+  me: User!
+}
+
+input ConfirmEmailInput {
+  clientMutationId: String
+  token: String!
+}
+
+type ConfirmEmailPayload {
+  clientMutationId: String
+  jwt: String!
+  me: User!
+}
+
+input ResendEmailConfirmationInput {
+  clientMutationId: String
+  email: String
+  continueUrl: String
+}
+
+input ChangePasswordInput {
+  clientMutationId: String
+  currentPassword: String!
+  newPassword: String!
+}
+
+input ChangeEmailInput {
+  clientMutationId: String
+  newEmail: String!
+  password: String!
+}
+
+input RevokeEmailChangeInput {
+  clientMutationId: String
+  token: String!
+}
+
+type RevokeEmailChangePayload {
+  clientMutationId: String
+  passwordResetToken: String!
+}
+
+input UpdateMyDetailsInput {
+  firstName: String
+  lastName: String
+  phone: String
+  clientMutationId: String
+  documents: [UpsertDocumentInput]
+}
+
+type UpdateMyDetailsPayload {
+  me: User!
+  clientMutationId: String
+}
+
+enum UserManagementState {
+  invited
+  active
+  disabled
+}
+
+type User {
+  id: ID!
+  managementState: UserManagementState
+  intercomHash: String!
+  displayName: String
+  firstName: String
+  lastName: String
+  displayEmail: String
+  email: String
+  phone: String
+  unconfirmedPhone: String
+  gigs: [Gig]
+  profile(gigId: ID): UserProfile
+  documents: [Document]
+  unconfirmedEmail: String
+  confirmedAt: String
+  active: Boolean!
+  isAdmin: Boolean!
+  assets: [Asset!]!
+  applications: [Application!]!
+  firstOrganizationId(includeInactive: Boolean): ID
+  organizations: [Organization]!
+  organizationUser(organizationId: ID): OrganizationUser
+  userType: OrganizationUserType
+  reportingProgramId: ID
+  programs(
+    ids: [ID]
+    managerOrganizationId: ID
+    includeUnaccepted: Boolean
+    includeArchived: Boolean
+    programGroupIds: [ID!]
+    before: String
+    after: String
+    limit: Int
+  ): [Program]!
+  suggestedOrganization(ids: [ID], managerOrganizationId: ID): ID
+  createdAt: DateTime
+  tosAcceptedAt: DateTime
+  isCorporate: Boolean!
+  language: String
+  kind: UserKind
+  checkInData: CheckInData
+  distanceFromGig(gigId: ID): Float
+  organizationName: String
+  organizationId: ID
+  selfAssignableOrganizations: [Organization!]!
+}
+
+type CheckInData {
+  lastCheckIn: String
+  lastStatus: String
+  nextCheckIn: String
+}
+
+enum UserKind {
+  human
+  bot
+  ghost
+}
+
+input EmptyInput {
+  clientMutationId: String
+}
+
+type EmptyPayload {
+  clientMutationId: String
+}
+
+input AreaGigsInput {
+  filters: JSON!
+  programIds: [ID!]!
+  distance: Float!
+}
+
+type PaginatedUserEdge {
+  cursor: ID
+  node: User!
+}
+
+type PaginatedUser {
+  edges: [PaginatedUserEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingUserEnum {
+  lastName
+  firstName
+}
+
+input OrderingUser {
+  sort: OrderingUserEnum
+  direction: Direction
+  args: JSON
+}
+
+type Application {
+  id: ID!
+  createdAt: DateTime
+  withdrawnAt: DateTime
+  hasConflictingGig: Boolean!
+  waitlisted: Boolean!
+  gig: Gig!
+  talent: User!
+}
+
+type PaginatedApplicationEdge {
+  cursor: ID
+  node: Application!
+}
+
+type PaginatedApplication {
+  edges: [PaginatedApplicationEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+type OrganizationPartnerships {
+  inviterOrganization: Organization!
+  inviteeOrganizations: [Organization!]!
+}
+
+enum CalendarDateStatus {
+  booked
+  unavailable
+}
+
+type UserCalendarDate {
+  user: User!
+  date: String!
+  year: Int!
+  month: Int!
+  day: Int!
+  status: CalendarDateStatus!
+  statusWithoutRecurring: CalendarDateStatus!
+}
+
+type GigAssignableUser {
+  user: User!
+  distance: Float
+  status: GigAssignableUserStatus!
+  note: String
+}
+
+enum GigAssignableUserStatus {
+  applied
+  withdrawn
+  available
+  unavailable
+  conflict
+  unknown
+  pending
+}
+
+type PaginatedGigAssignableUserEdge {
+  cursor: ID
+  node: GigAssignableUser!
+}
+
+type PaginatedGigAssignableUser {
+  edges: [PaginatedGigAssignableUserEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingGigAssignableUserEnum {
+  lastname
+  firstname
+  name
+  distance
+  status
+  city
+}
+
+input OrderingGigAssignableUser {
+  sort: OrderingGigAssignableUserEnum
+  direction: Direction
+  args: JSON
+}
+
+input CreateInvoiceVersionInput {
+  recipientOrganizationId: ID!
+}
+
+input UpdateInvoiceVersionInput {
+  recipientOrganizationId: ID!
+  name: String!
+  number: String
+  notes: String
+  dueDays: Int
+  dueDate: String
+  startDate: String
+  issuerContactId: ID
+  recipientContactId: ID
+}
+
+type InvoiceVersion {
+  id: ID!
+  stateKey: InvoiceVersionState!
+  invoiceId: ID!
+  name: String
+  number: String
+  notes: String
+  issuerContact: BillingContact
+  issuerOrganization: Organization!
+  recipientContact: BillingContact
+  recipientOrganization: Organization!
+  issuedAt: DateTime
+  issuedBy: User
+  dueDays: Int
+  dueDate: String
+  startDate: String
+  invoiceExpenseAmount: Float
+  gigCount: Int
+  gigTotalHours: Float
+  gigAvgRate: Float
+  gigLaborAmount: Float
+  gigExpenseAmount: Float
+  gigTotalAmount: Float
+  totalAmount: Float
+  ownerNames: [String]
+  programNames: [String]
+  updatedAt: String!
+  downloadToken: String!
+}
+
+enum InvoiceVersionState {
+  draft
+  finalized
+  processing
+  processingError
+  issued
+  retracted
+  approved
+  paid
+  voided
+}
+
+type InvoiceVersionStats {
+  invoiceExpenseAmount: Float!
+  gigTotalHours: Float!
+  gigAvgRate: Float!
+  gigLaborAmount: Float!
+  gigExpenseAmount: Float!
+  gigTotalAmount: Float!
+  totalAmount: Float!
+  accountingCodes: JSON!
+}
+
+type PaginatedInvoiceVersionEdge {
+  cursor: ID
+  node: InvoiceVersion!
+}
+
+type PaginatedInvoiceVersion {
+  edges: [PaginatedInvoiceVersionEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingInvoiceVersionEnum {
+  id
+  name
+  number
+}
+
+input OrderingInvoiceVersion {
+  sort: OrderingInvoiceVersionEnum
+  direction: Direction
+  args: JSON
+}
+
+type InvoiceGig {
+  invoiceVersionId: ID!
+  gig: Gig!
+}
+
+type PaginatedInvoiceGigEdge {
+  cursor: ID
+  node: InvoiceGig!
+}
+
+type PaginatedInvoiceGig {
+  edges: [PaginatedInvoiceGigEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingInvoiceGigEnum {
+  id
+  name
+  starttime
+  startdate
+}
+
+input OrderingInvoiceGig {
+  sort: OrderingInvoiceGigEnum
+  direction: Direction
+  args: JSON
+}
+
+type InvoiceExpense {
+  expenseId: ID!
+  invoiceVersionId: ID!
+  expense: Expense!
+}
+
+type PaginatedInvoiceExpenseEdge {
+  cursor: ID
+  node: InvoiceExpense!
+}
+
+type PaginatedInvoiceExpense {
+  edges: [PaginatedInvoiceExpenseEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingInvoiceExpenseEnum {
+  name
+}
+
+input OrderingInvoiceExpense {
+  sort: OrderingInvoiceExpenseEnum
+  direction: Direction
+  args: JSON
+}
+
+type Expense {
+  id: ID!
+  amount: Float!
+  images: [String]!
+  memo: String
+  personal: Boolean!
+  classKey: String!
+  createdAt: String!
+  createdBy: User!
+  updatedAt: String!
+  updatedBy: User!
+  issuedAt: String!
+  issuedBy: User!
+  modifiedByManager: Boolean
+}
+
+input ExpenseInput {
+  amount: Float!
+  images: [String]
+  memo: String
+  personal: Boolean
+  classKey: String
+}
+
+type PaginatedExpenseEdge {
+  cursor: ID
+  node: Expense!
+}
+
+type PaginatedExpense {
+  edges: [PaginatedExpenseEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingExpenseEnum {
+  name
+}
+
+input OrderingExpense {
+  sort: OrderingExpenseEnum
+  direction: Direction
+  args: JSON
+}
+
+type GigExpense {
+  gigId: ID!
+  invoiceId: ID!
+  reimburseAmount: Float
+  chargeAmount: Float
+  expense: Expense!
+  byAgency: Boolean!
+}
+
+input GigExpenseInput {
+  expenseId: ID
+  reimburseAmount: Float
+  chargeAmount: Float
+  expense: ExpenseInput!
+  byAgency: Boolean
+}
+
+type PaginatedGigExpenseEdge {
+  cursor: ID
+  node: GigExpense!
+}
+
+type PaginatedGigExpense {
+  edges: [PaginatedGigExpenseEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingGigExpenseEnum {
+  name
+}
+
+input OrderingGigExpense {
+  sort: OrderingGigExpenseEnum
+  direction: Direction
+  args: JSON
+}
+
+type UICustomization {
+  id: ID!
+  squareLightBgLogoUrl: String
+  squareDarkBgLogoUrl: String
+  longLightBgLogoUrl: String
+  longDarkBgLogoUrl: String
+  backgroundImageUrl: String
+  primaryColor: String
+}
+
+input UICustomizationInput {
+  id: ID
+  squareLightBgLogoUrl: String
+  squareDarkBgLogoUrl: String
+  longLightBgLogoUrl: String
+  longDarkBgLogoUrl: String
+  backgroundImageUrl: String
+  primaryColor: String
+}
+
+type InvitationCode {
+  id: ID
+  organization: Organization!
+  userType: OrganizationUserType!
+  reportingProgram: Program!
+  defaultRate: Float
+  token: String!
+  explanation: String
+  codeDeliveryExplanation: String
+}
+
+input InvitationCodeInput {
+  userType: OrganizationUserType!
+  reportingProgramId: ID
+  defaultRate: Float
+}
+
+type PaginatedInvitationCodeEdge {
+  cursor: ID
+  node: InvitationCode!
+}
+
+type PaginatedInvitationCode {
+  edges: [PaginatedInvitationCodeEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingInvitationCodeEnum {
+  createdAt
+}
+
+input OrderingInvitationCode {
+  sort: OrderingInvitationCodeEnum
+  direction: Direction
+  args: JSON
+}
+
+type GigReportStep {
+  id: String!
+  progress: Float!
+  productId: ID
+  key: String!
+  name: String!
+  shortDesc: String!
+  order: Int!
+  questions: [FullQuestion!]!
+  state: JSON!
+  stateChecksum: String!
+}
+
+input SaveGigReportStepInput {
+  gigId: ID!
+  stepKey: ID!
+  productId: ID
+  state: JSON!
+  stateChecksum: String!
+}
+
+type Schedule {
+  calendarWeekdays: [CalendarWeekday!]!
+  firstNotificationOffset: Int!
+  timezone: String!
+}
+
+type PaginatedScheduleEdge {
+  cursor: ID
+  node: Schedule!
+}
+
+type PaginatedSchedule {
+  edges: [PaginatedScheduleEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingScheduleEnum {
+  name
+}
+
+input OrderingSchedule {
+  sort: OrderingScheduleEnum
+  direction: Direction
+  args: JSON
+}
+
+type OrganizationProgram {
+  organization: Organization!
+  program: Program!
+}
+
+type ProgramPartnership {
+  organization: Organization!
+  partnerPrograms: [OrganizationProgram!]!
+  partnerOrganization: Organization!
+  lastModified: Posix!
+}
+
+type PaginatedProgramPartnershipEdge {
+  cursor: ID
+  node: ProgramPartnership!
+}
+
+type PaginatedProgramPartnership {
+  edges: [PaginatedProgramPartnershipEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingProgramPartnershipEnum {
+  name
+}
+
+input OrderingProgramPartnership {
+  sort: OrderingProgramPartnershipEnum
+  direction: Direction
+  args: JSON
+}
+
+type ProgramGroup {
+  id: ID!
+  name: String
+  programIds: [ID!]
+  programNames: [String!]
+}
+
+input ProgramGroupInput {
+  id: ID
+  name: String!
+  programIds: [ID!]
+}
+
+type PaginatedProgramGroupEdge {
+  cursor: ID
+  node: ProgramGroup!
+}
+
+type PaginatedProgramGroup {
+  edges: [PaginatedProgramGroupEdge!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+enum OrderingProgramGroupEnum {
+  name
+}
+
+input OrderingProgramGroup {
+  sort: OrderingProgramGroupEnum
+  direction: Direction
+  args: JSON
+}
