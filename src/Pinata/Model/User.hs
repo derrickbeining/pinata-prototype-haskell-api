@@ -1,20 +1,29 @@
 module Pinata.Model.User (
   User (..),
   UserRow (..),
-  UserPKey,
-  UserPKey',
-  UserPKeyReadField,
-  UserPKeyWriteField,
-  UserUUID,
-  UserUUIDReadField,
-  UserUUIDWriteField,
-  pUserPKey,
-  pUserUUID,
-  userResolver,
-  userByUUIDResolver,
-  userByPKeyResolver,
+  UserRow' (..),
+  PKey,
+  PKey' (PKey, unPKey),
+  PKeyReadField,
+  PKeyWriteField,
+  Uuid,
+  UuidReadField,
+  UuidWriteField,
+  findByPKey,
+  findByUUID,
+  pPKey,
+  pPKeyTableField,
+  pUuid,
+  pUuidTableField,
+  resolve,
+  resolveByPKey,
+  resolveMaybeByPKey,
+  resolverByUuid,
+  select,
+  pPKeyNullableTableField,
 ) where
 
+import Data.Data (Typeable)
 import qualified Data.Morpheus as GQL
 import Data.Morpheus.Kind (SCALAR)
 import Data.Morpheus.Types (
@@ -24,51 +33,75 @@ import Data.Morpheus.Types (
   GQLType (..),
  )
 import qualified Data.Morpheus.Types as GQL
-
 import Data.Text (Text)
-
 import GHC.Generics (Generic)
 
-import Data.Data (Typeable)
+import qualified Data.Profunctor as P
+import qualified Data.Profunctor.Product as PP
 import Data.Profunctor.Product.Default (Default (..))
 import qualified Data.Profunctor.Product.TH as PPTH
 import qualified Data.UUID as UUID
 import Opaleye (fromPGSFromField, (.===))
 import qualified Opaleye as DB
 import qualified Pinata.DB as DB
-import Pinata.Graphql (GraphQL, Value, runSelectMaybeOne, runSelectOne)
+import qualified Pinata.Graphql as GQL
 import qualified Pinata.Model.Scalar as Scalar
 
 --
 -- DATABASE MODEL
 --
 
-newtype UserPKey' a = UserPKey
-  { unUserPKey :: a
+-- | DO NOT EXPOSE CONSTRUCTOR
+newtype PKey' a = PKey
+  { unPKey :: a
   }
   deriving stock
     ( Eq
+    , Functor
     , Generic
     )
   deriving newtype
     ( Show
+    , DecodeScalar
+    , EncodeScalar
     )
 
-$(PPTH.makeAdaptorAndInstanceInferrable "pUserPKey" ''UserPKey')
+$(PPTH.makeAdaptorAndInstanceInferrable "pPKey" ''PKey')
 
-type UserPKey = UserPKey' Int
+-- | USE THIS FOR FKEYS; DON'T EXPOSE PKey CONSTRUCTOR
+pPKeyTableField :: DB.TableFields a b -> DB.TableFields (PKey' a) (PKey' b)
+pPKeyTableField = pPKey . PKey
 
-type UserPKeyReadField =
-  UserPKey' (DB.Field DB.PGInt4)
+pPKeyNullableTableField :: DB.TableFields (Maybe (DB.FieldNullable DB.PGInt4)) (DB.FieldNullable DB.PGInt4) -> DB.TableFields (Maybe (PKey' (DB.FieldNullable DB.PGInt4))) (PKey' (DB.FieldNullable DB.PGInt4))
+pPKeyNullableTableField fields = undefined
+  where
+    it = P.dimap mkLeft mkRight fields
+    mkLeft Nothing = Nothing
+    mkLeft (Just (PKey nullablePgInt4)) = Just nullablePgInt4
+    mkRight = Just
 
-type UserPKeyWriteField =
-  UserPKey' () -- Disallow writing to the pkey column
+type PKey = PKey' Int
 
-instance DB.DefaultFromField DB.SqlInt4 (Pinata.Model.User.UserPKey' Int) where
-  defaultFromField = DB.unsafeFromField UserPKey (DB.defaultFromField @DB.PGInt4)
+type PKeyReadField =
+  PKey' (DB.Field DB.PGInt4)
 
-newtype UserUUID' a = UserUUID
-  { unUserUUID :: a
+type PKeyWriteField =
+  PKey' () -- Disallow writing to the pkey column
+
+instance Typeable a => GQLType (PKey' a) where
+  type KIND (PKey' a) = SCALAR
+  typeOptions _ opts =
+    opts
+      { GQL.typeNameModifier = \isInput name ->
+          "UserPKey"
+      }
+
+instance DB.DefaultFromField DB.SqlInt4 (Pinata.Model.User.PKey' Int) where
+  defaultFromField = DB.unsafeFromField PKey (DB.defaultFromField @DB.PGInt4)
+
+-- | DO NOT EXPOSE CONSTRUCTOR
+newtype Uuid' a = Uuid
+  { unUuid :: a
   }
   deriving stock
     ( Generic
@@ -80,19 +113,28 @@ newtype UserUUID' a = UserUUID
     , EncodeScalar
     )
 
-$(PPTH.makeAdaptorAndInstanceInferrable "pUserUUID" ''UserUUID')
+$(PPTH.makeAdaptorAndInstanceInferrable "pUuid" ''Uuid')
 
-instance Typeable a => GQLType (UserUUID' a) where
-  type KIND (UserUUID' a) = SCALAR
+-- | USE THIS FOR FKEYS; DON'T EXPOSE PKey CONSTRUCTOR
+pUuidTableField :: PP.ProductProfunctor p => p a b -> p (Uuid' a) (Uuid' b)
+pUuidTableField = pUuid . Uuid
 
-type UserUUID = UserUUID' Scalar.UUID
+type Uuid = Uuid' Scalar.UUID
 
-type UserUUIDReadField =
-  UserUUID' (DB.Field DB.PGUuid)
+type UuidReadField =
+  Uuid' (DB.Field DB.PGUuid)
 
 -- | use Maybe because we don't need to specify uuid when inserting
-type UserUUIDWriteField =
-  UserUUID' (Maybe (DB.Field DB.PGUuid))
+type UuidWriteField =
+  Uuid' (Maybe (DB.Field DB.PGUuid))
+
+instance Typeable a => GQLType (Uuid' a) where
+  type KIND (Uuid' a) = SCALAR
+  typeOptions _ opts =
+    opts
+      { GQL.typeNameModifier = \isInput name ->
+          "UserUuid"
+      }
 
 --
 -- Table Definition
@@ -111,49 +153,49 @@ $(PPTH.makeAdaptorAndInstanceInferrable "pUserRow" ''UserRow')
 type UserRow =
   DB.TimestampedRow
     ( UserRow'
-        UserPKey -- pkey
-        UserUUID -- uuid
+        PKey -- pkey
+        Uuid -- uuid
     )
 
-type UserWriteField =
+type WriteField =
   DB.TimestampedWriteField
     ( UserRow'
-        UserPKeyWriteField
-        UserUUIDWriteField
+        PKeyWriteField
+        UuidWriteField
     )
 
-type UserReadField =
+type ReadField =
   DB.TimestampedReadField
     ( UserRow'
-        UserPKeyReadField
-        UserUUIDReadField
+        PKeyReadField
+        UuidReadField
     )
 
-table :: DB.Table UserWriteField UserReadField
+table :: DB.Table WriteField ReadField
 table =
-  DB.table "organizations" . DB.pTimestampedTable . DB.withTimestampFields $
+  DB.table "user" . DB.pTimestampedTable . DB.withTimestampFields $
     pUserRow rowDef
   where
     rowDef =
       UserRow
-        { pkey' = pUserPKey . UserPKey $ DB.readOnlyTableField "id"
-        , uuid' = pUserUUID . UserUUID $ DB.tableField "uuid"
+        { pkey' = pPKey . PKey $ DB.readOnlyTableField "id"
+        , uuid' = pUuid . Uuid $ DB.tableField "uuid"
         }
 
 --
 -- DATABASE QUERIES
 --
 
-select :: DB.Select UserReadField
+select :: DB.Select ReadField
 select = DB.selectTable table
 
-findByUUID :: UserUUID -> DB.Select UserReadField
-findByUUID userUUID = do
+findByUUID :: Uuid -> DB.Select ReadField
+findByUUID uuid = do
   user <- select
-  DB.where_ $ uuid' (DB.record user) .=== DB.toFields userUUID
+  DB.where_ $ uuid' (DB.record user) .=== DB.toFields uuid
   return user
 
-findByPKey :: UserPKey -> DB.Select UserReadField
+findByPKey :: PKey -> DB.Select ReadField
 findByPKey pkey = do
   user <- select
   DB.where_ $ pkey' (DB.record user) .=== DB.toFields pkey
@@ -164,7 +206,7 @@ findByPKey pkey = do
 --
 
 data User m = User
-  { uuid :: m UserUUID
+  { uuid :: m Uuid
   }
   deriving stock (Generic)
   deriving anyclass (GQLType)
@@ -172,33 +214,43 @@ data User m = User
 --
 -- # Resolvers
 --
-userResolver ::
-  (Monad m, GraphQL o) =>
+resolve ::
+  (GQL.MonadGraphQL o m) =>
   UserRow ->
-  Value o (User m)
-userResolver org =
-  let UserRow{..} = DB.record org
+  GQL.Value o m User
+resolve user =
+  let UserRow{..} = DB.record user
    in pure
         User
           { uuid = pure uuid'
           }
 
-userByUUIDResolver ::
-  (GraphQL o, Monad m) =>
-  Arg "uuid" UserUUID ->
-  Value o (User m)
-userByUUIDResolver uuidArg = do
+resolverByUuid ::
+  (GQL.MonadGraphQL o m) =>
+  Arg "uuid" Uuid ->
+  GQL.Value o m User
+resolverByUuid uuidArg = do
   let q = findByUUID . argValue $ uuidArg
-  it <- runSelectOne q "Invalid org uuid"
-  userResolver it
+  it <- GQL.runSelectOne q "Invalid user uuid"
+  resolve it
 
-userByPKeyResolver ::
-  (GraphQL o, Monad m) =>
-  Arg "userPKey" UserPKey ->
-  Value o (Maybe (User m))
-userByPKeyResolver pkeyArg = do
+resolveByPKey ::
+  (GQL.MonadGraphQL o m) =>
+  Arg "pkey" PKey ->
+  GQL.Value o m User
+resolveByPKey pkeyArg = do
+  let userPKey = argValue pkeyArg
+      q = findByPKey userPKey
+  it <- GQL.runSelectOne q "Invalid user pkey"
+  resolve it
+
+resolveMaybeByPKey ::
+  (GQL.MonadGraphQL o m) =>
+  Arg "pkey" PKey ->
+  GQL.Composed o m Maybe User
+resolveMaybeByPKey pkeyArg = do
   let userPKey = argValue pkeyArg
       q = findByPKey userPKey
       pkeyStr = show userPKey
-  mUser <- runSelectMaybeOne q
-  maybe (pure Nothing) (fmap Just . userResolver) mUser
+  mUser <- GQL.runSelectMaybeOne q
+  maybe (pure Nothing) (fmap Just . resolve) mUser

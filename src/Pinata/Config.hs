@@ -5,15 +5,16 @@ import Control.Monad.IO.Class (MonadIO, liftIO)
 import Control.Monad.Trans (liftIO)
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Maybe (MaybeT)
-import Data.Pool
+import Data.Pool (Pool)
+import qualified Data.Pool as Pool
 import Data.Text (Text)
 import qualified Data.Text as T
-import Database.PostgreSQL.Simple
-import Database.PostgreSQL.Simple.URL
-import GHC.Generics
-import LoadEnv
+import qualified Database.PostgreSQL.Simple as PG
+import qualified Database.PostgreSQL.Simple.URL as PG
+import GHC.Generics (Generic)
+import LoadEnv (loadEnv)
 import System.Environment (lookupEnv)
-import System.Envy
+import qualified System.Envy as Env
 
 -- |
 
@@ -25,7 +26,7 @@ data Config = Config
   }
   deriving (Generic, Show)
 
-instance DefConfig Config where
+instance Env.DefConfig Config where
   defConfig =
     Config
       { databaseUrl =
@@ -34,22 +35,22 @@ instance DefConfig Config where
       , port = 10092
       }
 
-instance FromEnv Config
+instance Env.FromEnv Config
 
 -------------------------------------------------------------------------------
 type Init a = ExceptT String IO a
 
 loadConfig :: Init Config
-loadConfig = ExceptT $ liftIO $ loadEnv >> decodeEnv
+loadConfig = ExceptT $ liftIO $ loadEnv >> Env.decodeEnv
 
-createConnectionsPool :: Config -> Init (Pool Connection)
+createConnectionsPool :: Config -> Init (Pool PG.Connection)
 createConnectionsPool config =
-  case parseDatabaseUrl . T.unpack . databaseUrl $ config of
+  case PG.parseDatabaseUrl . T.unpack . databaseUrl $ config of
     Just connectionInfo ->
-      liftIO $ createPool (connect connectionInfo) close 2 5 10
+      liftIO $ Pool.createPool (PG.connect connectionInfo) PG.close 2 5 10
     _ -> throwError "Invalid database url"
 
-initialize :: Init (Config, Pool Connection)
+initialize :: Init (Config, Pool PG.Connection)
 initialize = do
   config <- loadConfig
   connectionPool <- createConnectionsPool config

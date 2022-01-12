@@ -33,6 +33,7 @@ import Network.HTTP.Types.Status (
  )
 import Network.Wai.Middleware.Cors
 
+import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import Web.Scotty
 
 -------------------------------------------------------------------------------
@@ -62,15 +63,14 @@ extractAuthorizationToken
 webServer :: (Config, Pool Connection) -> IO ()
 webServer (config@Config{port, jwtSecret}, connectionPool) = scotty port $ do
   let myCors =
-        cors
-          ( const $
-              Just
-                ( simpleCorsResourcePolicy
-                    { corsRequestHeaders = ["Content-Type"]
-                    }
-                )
-          )
+        cors $ \req ->
+          let policy =
+                simpleCorsResourcePolicy
+                  { corsRequestHeaders = ["Content-Type"]
+                  }
+           in Just policy
   middleware myCors
+  middleware logStdoutDev
   post "/api" $ do
     reqBody <- body
     reqHeaders <- headers

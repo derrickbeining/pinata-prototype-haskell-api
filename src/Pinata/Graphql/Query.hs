@@ -7,12 +7,14 @@ import Data.Morpheus.Types (
 import GHC.Generics (Generic)
 import Pinata.Model.Organization (
   Organization,
-  OrganizationUUID,
+  Uuid,
  )
 import Pinata.Model.Scalar (UUID)
+import Pinata.Model.Task (Task)
 
-newtype Query (m :: * -> *) = Query
-  { organization :: Arg "uuid" OrganizationUUID -> m (Organization m)
+data Query (m :: * -> *) = Query
+  { organization :: Arg "uuid" Uuid -> m (Organization m)
+  , tasks :: m [Task m]
   }
   deriving stock (Generic)
   deriving anyclass (GQLType)

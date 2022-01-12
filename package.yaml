@@ -69,6 +69,7 @@ dependencies:
   - opaleye
   - postgresql-simple
   - postgresql-simple-url
+  - profunctors
   - product-profunctors
   - resource-pool
   - scientific

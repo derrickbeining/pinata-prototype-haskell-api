@@ -7,18 +7,20 @@ module Pinata.Model.Organization (
   Organization,
   OrganizationInput,
   OrganizationType,
-  OrganizationUUID,
+  Uuid,
   PaginatedOrganization,
   PaginatedOrganizationEdge,
-  organizationByUUIDResolver,
-  organizationResolver,
+  resolveByUuid,
+  resolve,
 ) where
 
+import Control.Exception (try)
 import qualified Control.Monad.Trans.Except as ExceptT
 import qualified Data.Aeson as Aeson
 import Data.Data (Proxy (Proxy), Typeable)
 import Data.Functor ((<&>))
 import Data.Morpheus.Kind (SCALAR)
+import qualified Data.Morpheus.Kind as GQL
 import Data.Morpheus.Types (
   Arg (Arg, argValue),
   DecodeScalar,
@@ -27,6 +29,7 @@ import Data.Morpheus.Types (
   QUERY,
   Resolver,
  )
+import qualified Data.Morpheus.Types as GQL
 import qualified Data.Morpheus.Types as Mor
 import Data.Profunctor.Product.Default (Default (..))
 import qualified Data.Profunctor.Product.TH as PPTH
@@ -38,12 +41,7 @@ import GHC.Generics (Generic)
 import Opaleye ((.===))
 import qualified Opaleye as DB
 import qualified Pinata.DB as DB
-import Pinata.Graphql (
-  GraphQL,
-  Value,
-  Web,
-  runSelectOne,
- )
+import qualified Pinata.Graphql as GQL
 import Pinata.Model.Basics (Direction)
 import Pinata.Model.BillingContact (BillingContact)
 import Pinata.Model.Industry (Industry)
@@ -57,15 +55,15 @@ import Pinata.Model.Program (Program)
 import Pinata.Model.Role (Role)
 import qualified Pinata.Model.Scalar as Scalar
 import Pinata.Model.UICustomization (UICustomization)
-import Pinata.Model.User (User, UserPKey (..), UserPKey' (..), pUserPKey)
+import Pinata.Model.User (User)
 import qualified Pinata.Model.User as User
 
 --
 -- DATABASE MODEL
 --
 
-newtype OrganizationUUID' a = OrganizationUUID
-  { unOrganizationUUID :: a
+newtype Uuid' a = Uuid
+  { unUuid :: a
   }
   deriving stock
     ( Generic
@@ -77,35 +75,40 @@ newtype OrganizationUUID' a = OrganizationUUID
     , EncodeScalar
     )
 
-$(PPTH.makeAdaptorAndInstanceInferrable "pOrganizationUUID" ''OrganizationUUID')
+$(PPTH.makeAdaptorAndInstanceInferrable "pUuid" ''Uuid')
 
-instance Typeable a => GQLType (OrganizationUUID' a) where
-  type KIND (OrganizationUUID' a) = SCALAR
+type Uuid = Uuid' Scalar.UUID
 
-type OrganizationUUID = OrganizationUUID' Scalar.UUID
+instance Typeable a => GQLType (Uuid' a) where
+  type KIND (Uuid' a) = SCALAR
+  typeOptions _ opts =
+    opts
+      { GQL.typeNameModifier = \isInput name ->
+          "OrganizationUuid"
+      }
 
-type OrganizationUUIDReadField =
-  OrganizationUUID' (DB.Field DB.PGUuid)
+type UuidReadField =
+  Uuid' (DB.Field DB.PGUuid)
 
 -- | use Maybe because we don't need to specify uuid when inserting
-type OrganizationUUIDWriteField =
-  OrganizationUUID' (Maybe (DB.Field DB.PGUuid))
+type UuidWriteField =
+  Uuid' (Maybe (DB.Field DB.PGUuid))
 
--- instance DB.IsSqlType a => DB.IsSqlType (OrganizationUUID' a) where
+-- instance DB.IsSqlType a => DB.IsSqlType (Uuid' a) where
 --   showSqlType _ = DB.showSqlType (Proxy @a)
 
--- instance Default DB.ToFields OrganizationUUID (DB.Column DB.PGUuid) where
---   def = DB.toToFields (DB.sqlUUID . unOrganizationUUID)
+-- instance Default DB.ToFields Uuid (DB.Column DB.PGUuid) where
+--   def = DB.toToFields (DB.sqlUUID . unUuid)
 
--- instance DB.DefaultFromField DB.PGUuid OrganizationUUID where
---   defaultFromField = DB.unsafeFromField OrganizationUUID (DB.defaultFromField @DB.PGUuid)
+-- instance DB.DefaultFromField DB.PGUuid Uuid where
+--   defaultFromField = DB.unsafeFromField Uuid (DB.defaultFromField @DB.PGUuid)
 
 --
 --
 --
 
-newtype OrganizationPKey' a = OrganizationPKey
-  { unOrganizationPKey :: a
+newtype PKey' a = PKey
+  { unPKey :: a
   }
   deriving stock
     ( Generic
@@ -113,24 +116,32 @@ newtype OrganizationPKey' a = OrganizationPKey
     , Eq
     )
 
-$(PPTH.makeAdaptorAndInstanceInferrable "pOrganizationPKey" ''OrganizationPKey')
+$(PPTH.makeAdaptorAndInstanceInferrable "pPKey" ''PKey')
 
-type OrganizationPKey = OrganizationPKey' Int
+type PKey = PKey' Int
 
-type OrganizationPKeyReadField =
-  OrganizationPKey' (DB.Field DB.PGInt4)
+instance Typeable a => GQLType (PKey' a) where
+  type KIND (PKey' a) = SCALAR
+  typeOptions _ opts =
+    opts
+      { GQL.typeNameModifier = \isInput name ->
+          "OrganizationPKey"
+      }
 
-type OrganizationPKeyWriteField =
-  OrganizationPKey' () -- Disallow writing to the pkey column
+type PKeyReadField =
+  PKey' (DB.Field DB.PGInt4)
 
--- instance DB.IsSqlType a => DB.IsSqlType (OrganizationPKey' a) where
+type PKeyWriteField =
+  PKey' () -- Disallow writing to the pkey column
+
+-- instance DB.IsSqlType a => DB.IsSqlType (PKey' a) where
 --   showSqlType _ = DB.showSqlType (Proxy @a)
 
--- instance Default DB.ToFields OrganizationPKey (DB.Column DB.PGInt4) where
---   def = DB.toToFields (DB.sqlInt4 . fromIntegral . unOrganizationPKey)
+-- instance Default DB.ToFields PKey (DB.Column DB.PGInt4) where
+--   def = DB.toToFields (DB.sqlInt4 . fromIntegral . unPKey)
 
--- instance DB.DefaultFromField DB.PGInt4 OrganizationPKey where
---   defaultFromField = DB.unsafeFromField OrganizationPKey (DB.defaultFromField @DB.PGInt4)
+-- instance DB.DefaultFromField DB.PGInt4 PKey where
+--   defaultFromField = DB.unsafeFromField PKey (DB.defaultFromField @DB.PGInt4)
 
 --
 -- Table Definition
@@ -140,14 +151,21 @@ data
   OrganizationRow'
     activatedAt --
     activatedBy
+    active
     adminLabel
+    availabilityCalendarActive
+    brandingActive
     displayName
     name
     pkey
-    uuid = OrganizationRow
+    uuid --
+  = OrganizationRow
   { activatedAt' :: activatedAt
   , activatedBy' :: activatedBy
+  , active' :: active
+  , availabilityCalendarActive' :: availabilityCalendarActive
   , adminLabel' :: adminLabel
+  , brandingActive' :: brandingActive
   , displayName' :: displayName
   , name' :: name
   , pkey' :: pkey
@@ -160,39 +178,48 @@ type OrganizationRow =
   DB.TimestampedRow
     ( OrganizationRow'
         (Maybe Scalar.UtcTimestamp) -- activatedAt
-        (Maybe UserPKey) -- activatedBy
+        (Maybe User.PKey) -- activatedBy
+        Bool -- active
         (Maybe Text) -- adminLabel
+        (Maybe Bool) -- availabilityCalendarActive
+        Bool -- brandingActive
         (Maybe Text) -- displayName
         Text -- name
-        OrganizationPKey -- pkey
-        OrganizationUUID -- uuid
+        PKey -- pkey
+        Uuid -- uuid
     )
 
-type OrganizationWriteField =
+type WriteField =
   DB.TimestampedWriteField
     ( OrganizationRow'
         (DB.FieldNullable DB.PGTimestamptz)
         (DB.FieldNullable DB.PGInt4)
+        (Maybe (DB.Field DB.PGBool))
         (DB.FieldNullable DB.PGText)
+        (Maybe (DB.FieldNullable DB.PGBool))
+        (Maybe (DB.Field DB.PGBool))
         (DB.FieldNullable DB.PGText)
         (DB.Field DB.PGText)
-        OrganizationPKeyWriteField
-        OrganizationUUIDWriteField
+        PKeyWriteField
+        UuidWriteField
     )
 
-type OrganizationReadField =
+type ReadField =
   DB.TimestampedReadField
     ( OrganizationRow'
         (DB.FieldNullable DB.PGTimestamptz)
         (DB.FieldNullable DB.PGInt4)
+        (DB.Field DB.PGBool)
         (DB.FieldNullable DB.PGText)
+        (DB.FieldNullable DB.PGBool)
+        (DB.Field DB.PGBool)
         (DB.FieldNullable DB.PGText)
         (DB.Field DB.PGText)
-        OrganizationPKeyReadField
-        OrganizationUUIDReadField
+        PKeyReadField
+        UuidReadField
     )
 
-table :: DB.Table OrganizationWriteField OrganizationReadField
+table :: DB.Table WriteField ReadField
 table =
   DB.table "organizations" . DB.pTimestampedTable . DB.withTimestampFields $
     pOrganizationRow rowDef
@@ -201,21 +228,24 @@ table =
       OrganizationRow
         { activatedAt' = DB.tableField "activated_at"
         , activatedBy' = DB.tableField "activated_by"
+        , active' = DB.tableField "active"
         , adminLabel' = DB.tableField "admin_label"
+        , availabilityCalendarActive' = DB.tableField "availability_calendar_active"
+        , brandingActive' = DB.tableField "branding_active"
         , displayName' = DB.tableField "display_name"
         , name' = DB.tableField "name"
-        , pkey' = pOrganizationPKey . OrganizationPKey $ DB.readOnlyTableField "id"
-        , uuid' = pOrganizationUUID . OrganizationUUID $ DB.tableField "uuid"
+        , pkey' = pPKey . PKey $ DB.readOnlyTableField "id"
+        , uuid' = pUuid . Uuid $ DB.tableField "uuid"
         }
 
 --
 -- DATABASE QUERIES
 --
 
-select :: DB.Select OrganizationReadField
+select :: DB.Select ReadField
 select = DB.selectTable table
 
-findByUUID :: OrganizationUUID -> DB.Select OrganizationReadField
+findByUUID :: Uuid -> DB.Select ReadField
 findByUUID orgUuid = do
   org <- select
   DB.where_ $ uuid' (DB.record org) .=== DB.toFields orgUuid
@@ -227,17 +257,17 @@ findByUUID orgUuid = do
 
 data Organization m = Organization
   { activatedAt :: m (Maybe Scalar.UtcTimestamp)
-  , activatedBy :: Arg "userPKey" UserPKey -> m (Maybe (User m))
+  , activatedBy :: m (Maybe (User m))
+  , active :: m Bool
   , adminLabel :: m (Maybe Text)
-  , uuid :: m OrganizationUUID
-  , name :: m Text
-  , displayName :: m (Maybe Text)
+  , availabilityCalendarActive :: m (Maybe Bool)
+  , brandingActive :: m Bool
   , createdAt :: m Scalar.UtcTimestamp
+  , displayName :: m (Maybe Text)
+  , name :: m Text
   , updatedAt :: m Scalar.UtcTimestamp
-  -- , active :: m Bool
-  -- , availabilityCalendarActive :: m (Maybe Bool)
+  , uuid :: m Uuid
   -- , billingContacts :: m [BillingContact m]
-  -- , brandingActive :: m Bool
   -- , creators :: OrgCreatorsArgs -> m [User m]
   -- , description :: m (Maybe Text)
   -- , financialPackageActive :: m Bool
@@ -301,10 +331,10 @@ data OrganizationType
   deriving stock (Generic)
   deriving anyclass (GQLType)
 
-type PaginatedOrganizationEdge m = PaginatedEdge OrganizationUUID m
+type PaginatedOrganizationEdge m = PaginatedEdge Uuid m
 
 type PaginatedOrganization m =
-  PaginatedEntity OrganizationUUID (Organization m) m
+  PaginatedEntity Uuid (Organization m) m
 
 data OrderingOrganizationEnum = OrderingOrgName
   deriving stock (Generic)
@@ -321,18 +351,21 @@ data OrderingOrganizationInput = OrderingOrganizationInput
 --
 -- # Resolvers
 --
-organizationResolver ::
-  (Monad m, GraphQL o) =>
+resolve ::
+  (GQL.MonadGraphQL o m) =>
   OrganizationRow ->
-  Value o (Organization m)
-organizationResolver org =
+  GQL.Value o m Organization
+resolve org =
   let OrganizationRow{..} = DB.record org
    in do
         pure
           Organization
             { activatedAt = pure activatedAt'
-            , activatedBy = User.userByPKeyResolver
+            , activatedBy = maybe (pure Nothing) User.resolveMaybeByPKey (Arg <$> activatedBy')
+            , active = pure active'
             , adminLabel = pure adminLabel'
+            , availabilityCalendarActive = pure availabilityCalendarActive'
+            , brandingActive = pure brandingActive'
             , createdAt = pure $ Scalar.UtcTimestamp $ DB.recordCreatedAt org
             , displayName = pure displayName'
             , name = pure name'
@@ -340,13 +373,13 @@ organizationResolver org =
             , uuid = pure uuid'
             }
 
-organizationByUUIDResolver ::
-  (GraphQL o, Monad m) =>
-  Arg "uuid" OrganizationUUID ->
-  Value o (Organization m)
-organizationByUUIDResolver uuidArg = do
+resolveByUuid ::
+  (GQL.MonadGraphQL o m) =>
+  Arg "uuid" Uuid ->
+  GQL.Value o m Organization
+resolveByUuid uuidArg = do
   let orgUUID = argValue uuidArg
-      uuidStr = UUID.toString . Scalar.unUUID . unOrganizationUUID $ orgUUID
+      uuidStr = UUID.toString . Scalar.unUUID . unUuid $ orgUUID
       q = findByUUID . argValue $ uuidArg
-  it <- runSelectOne q ("An organization with UUID " <> uuidStr <> " does not exist.")
-  organizationResolver it
+  it <- GQL.runSelectOne q ("An organization with UUID " <> uuidStr <> " does not exist.")
+  resolve it
