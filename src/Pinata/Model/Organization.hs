@@ -221,7 +221,7 @@ type ReadField =
 
 table :: DB.Table WriteField ReadField
 table =
-  DB.table "organizations" . DB.pTimestampedTable . DB.withTimestampFields $
+  DB.table "organizations" . DB.pTimestampedRow . DB.withTimestampFields $
     pOrganizationRow rowDef
   where
     rowDef =

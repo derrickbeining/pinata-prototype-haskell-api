@@ -6,9 +6,11 @@ module Pinata.Model.User (
   PKey' (PKey, unPKey),
   PKeyReadField,
   PKeyWriteField,
+  ReadField,
   Uuid,
   UuidReadField,
   UuidWriteField,
+  WriteField,
   findByPKey,
   findByUUID,
   pPKey,
@@ -20,7 +22,6 @@ module Pinata.Model.User (
   resolveMaybeByPKey,
   resolverByUuid,
   select,
-  pPKeyNullableTableField,
 ) where
 
 import Data.Data (Typeable)
@@ -71,14 +72,6 @@ $(PPTH.makeAdaptorAndInstanceInferrable "pPKey" ''PKey')
 -- | USE THIS FOR FKEYS; DON'T EXPOSE PKey CONSTRUCTOR
 pPKeyTableField :: DB.TableFields a b -> DB.TableFields (PKey' a) (PKey' b)
 pPKeyTableField = pPKey . PKey
-
-pPKeyNullableTableField :: DB.TableFields (Maybe (DB.FieldNullable DB.PGInt4)) (DB.FieldNullable DB.PGInt4) -> DB.TableFields (Maybe (PKey' (DB.FieldNullable DB.PGInt4))) (PKey' (DB.FieldNullable DB.PGInt4))
-pPKeyNullableTableField fields = undefined
-  where
-    it = P.dimap mkLeft mkRight fields
-    mkLeft Nothing = Nothing
-    mkLeft (Just (PKey nullablePgInt4)) = Just nullablePgInt4
-    mkRight = Just
 
 type PKey = PKey' Int
 
@@ -173,7 +166,7 @@ type ReadField =
 
 table :: DB.Table WriteField ReadField
 table =
-  DB.table "user" . DB.pTimestampedTable . DB.withTimestampFields $
+  DB.table "users" . DB.pTimestampedRow . DB.withTimestampFields $
     pUserRow rowDef
   where
     rowDef =

@@ -69,7 +69,7 @@ type UserField =
 
 userTable :: DB.Table UserWriteField UserField
 userTable =
-  DB.table "users" . DB.pTimestampedTable . DB.withTimestampFields $
+  DB.table "users" . DB.pTimestampedRow . DB.withTimestampFields $
     pUser
       User
         { userId = DB.tableField "id"

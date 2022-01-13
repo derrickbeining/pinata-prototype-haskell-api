@@ -17,6 +17,8 @@ module Pinata.Model.Task (
   resolveMaybeByPKey,
 ) where
 
+import qualified Control.Arrow as Arrow
+import Data.Data (Typeable)
 import qualified Data.Morpheus as GQL
 import Data.Morpheus.Kind (SCALAR)
 import Data.Morpheus.Types (
@@ -26,17 +28,14 @@ import Data.Morpheus.Types (
   GQLType (..),
  )
 import qualified Data.Morpheus.Types as GQL
-
-import Data.Text (Text)
-
-import GHC.Generics (Generic)
-
-import Data.Data (Typeable)
 import Data.Profunctor.Product.Default (Default (..))
 import qualified Data.Profunctor.Product.TH as PPTH
+import Data.Text (Text)
 import qualified Data.UUID as UUID
+import GHC.Generics (Generic)
 import Opaleye (fromPGSFromField, (.===))
 import qualified Opaleye as DB
+import qualified Opaleye.Internal.MaybeFields as DB
 import qualified Pinata.DB as DB
 import qualified Pinata.Graphql as GQL
 import qualified Pinata.Model.Scalar as Scalar
@@ -130,7 +129,7 @@ data
 $(PPTH.makeAdaptorAndInstanceInferrable "pTaskRow" ''TaskRow')
 
 type TaskRow =
-  DB.TimestampedRow
+  DB.LocalTimestampedRow
     ( TaskRow'
         (Maybe User.PKey) -- ownerId
         PKey -- pkey
@@ -138,29 +137,29 @@ type TaskRow =
     )
 
 type WriteField =
-  DB.TimestampedWriteField
+  DB.LocalTimestampedWriteField
     ( TaskRow'
-        (Maybe (DB.FieldNullable DB.PGInt4)) -- TODO: how do I make this use User.PKey???
+        (User.PKey' (Maybe (DB.FieldNullable DB.PGInt4))) -- TODO: how do I make this use User.PKey???
         PKeyWriteField
         UuidWriteField
     )
 
 type ReadField =
-  DB.TimestampedReadField
+  DB.LocalTimestampedReadField
     ( TaskRow'
-        (DB.FieldNullable DB.PGInt4) -- TODO: how do I make this use User.PKey???
+        (User.PKey' (DB.FieldNullable DB.PGInt4)) -- TODO: how do I make this use User.PKey???
         PKeyReadField
         UuidReadField
     )
 
 table :: DB.Table WriteField ReadField
 table =
-  DB.table "gigs" . DB.pTimestampedTable . DB.withTimestampFields $
+  DB.table "gigs" . DB.pTimestampedRow . DB.withLocalTimestampFields $
     pTaskRow rowDef
   where
     rowDef =
       TaskRow
-        { ownerId' = DB.tableField "owner_id" -- TODO: how do I make this use User.PKey???
+        { ownerId' = User.pPKeyTableField $ DB.tableField "owner_id" -- TODO: how do I make this use User.PKey???
         , pkey' = pPKey . PKey $ DB.readOnlyTableField "id"
         , uuid' = pUuid . Uuid $ DB.tableField "uuid"
         }
@@ -188,7 +187,7 @@ allByOwnerId :: User.PKey -> DB.Select ReadField
 allByOwnerId ownerId = do
   task <- select
   -- TODO: how do I make this ownerId' into a User.PKey so I don't have to unwrap it to compare???
-  DB.where_ $ ownerId' (DB.record task) .=== DB.toNullable (User.unPKey (DB.toFields ownerId))
+  DB.where_ $ ownerId' (DB.record task) .=== (DB.toNullable <$> DB.toFields ownerId)
   return task
 
 --
@@ -205,6 +204,7 @@ data Task m = Task
 --
 -- # Resolvers
 --
+
 resolve ::
   (GQL.MonadGraphQL o m) => TaskRow -> GQL.Value o m Task
 resolve task =
@@ -215,21 +215,30 @@ resolve task =
           , owner = maybe (pure Nothing) resolveOwnerByFKey (Arg <$> ownerId')
           }
 
-resolveAll :: (GQL.MonadGraphQL o m) => GQL.Composed o m [] Task
-resolveAll = GQL.runSelect $ do
-  taskRow <- select
-  let task@TaskRow{uuid', ownerId'} = DB.record taskRow
-  ownerUser <- case ownerId' of
-    Nothing -> pure Nothing
-    Just id -> do
-      user <- User.select
-      DB.where_ $ DB.toFields id .=== DB.toFields (User.pkey' (DB.record user))
-      return (Just user)
-  return $
-    Task
-      { uuid = pure uuid'
-      , owner = maybe (pure Nothing) (fmap Just . User.resolve) ownerUser
-      }
+resolveAll :: forall o m. (GQL.MonadGraphQL o m) => GQL.Composed o m [] Task
+resolveAll = do
+  rows <- getRows
+  pure $
+    flip fmap rows $ \(task, mUser) ->
+      Task
+        { uuid = pure $ uuid' $ DB.record task
+        , owner = maybe (pure Nothing) (fmap Just . User.resolve) mUser
+        }
+  where
+    getRows :: GQL.Composed o m [] (TaskRow, Maybe User.UserRow)
+    getRows = GQL.runSelect query
+
+    query :: DB.Select (ReadField, DB.MaybeFields User.ReadField)
+    query = do
+      task <- select
+      mOwner <-
+        DB.optionalRestrict User.select
+          `DB.viaLateral` userIsOwner (ownerId' (DB.record task))
+      pure (task, mOwner)
+
+    userIsOwner :: User.PKey' (DB.Column (DB.Nullable DB.SqlInt4)) -> User.ReadField -> DB.Field DB.SqlBool
+    userIsOwner ownerIdField u =
+      ownerIdField .=== (DB.toNullable <$> User.pkey' (DB.record u))
 
 resolveByUuid ::
   (GQL.MonadGraphQL o m) => Arg "uuid" Uuid -> GQL.Value o m Task
